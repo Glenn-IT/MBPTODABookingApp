@@ -517,19 +517,26 @@ Body: { "email": "driver@test.com", "password": "password123" }
 - [x] **4.9.1** Create Firebase project at [console.firebase.google.com](https://console.firebase.google.com)
 - [x] **4.9.2** Add Android app to Firebase project, download `google-services.json`
 - [x] **4.9.3** Implement `PTODAFirebaseMessagingService.kt`
-  - Override `onNewToken` — send token to API (`PUT /user/fcm-token`)
-  - Override `onMessageReceived` — show notification to user
-- [x] **4.9.4** Register service in `AndroidManifest.xml`
-- [ ] **4.9.5** Test push notification: driver receives notification on new booking
+  - Override `onNewToken` — save token locally + sync to API (`PUT /user/fcm-token`) if already logged in
+  - Override `onMessageReceived` — handle both `notification` and `data` payloads; show notification with `PendingIntent` tap-to-open (role-aware routing: driver → `DriverHomeActivity`, passenger → `RideStatusActivity` / `PassengerHomeActivity`)
+- [x] **4.9.4** Register service in `AndroidManifest.xml` + `POST_NOTIFICATIONS` runtime permission requested in `PassengerHomeActivity` and `DriverHomeActivity` (Android 13+)
+- [x] **4.9.5** FCM token sync after login wired in `AuthRepository.login()` — calls `syncFcmTokenIfAvailable()` which posts locally-stored FCM token to `PUT /user/fcm-token` immediately after JWT is saved
+- [~] **4.9.6** End-to-end test: driver receives push notification when passenger creates a booking — requires XAMPP PHP server running + real FCM server key in `config/config.php` + physical device or emulator with Play Services
 
 ### 4.10 Google Maps API
 
-- [ ] **4.10.1** Enable Maps SDK for Android in Google Cloud Console
-- [~] **4.10.2** Get API key, add to `AndroidManifest.xml` as `<meta-data>` _(placeholder added — replace `YOUR_MAPS_API_KEY`)_
+- [~] **4.10.1** Enable Maps SDK for Android in Google Cloud Console _(manual step — go to console.cloud.google.com → APIs & Services → Enable "Maps SDK for Android")_
+- [~] **4.10.2** Get API key, add to `AndroidManifest.xml` as `<meta-data>` _(placeholder added — replace `YOUR_MAPS_API_KEY` with real key from Google Cloud Console)_
 - [x] **4.10.3** Add `SupportMapFragment` in passenger and driver screens
 - [x] **4.10.4** Implement location permission request (`ACCESS_FINE_LOCATION`)
 - [x] **4.10.5** Show user's current location on map with `FusedLocationProviderClient`
-- [ ] **4.10.6** Implement place picker / tap-to-set-marker for pickup & drop-off
+- [x] **4.10.6** Implement tap-to-set-marker for pickup & drop-off in `BookRideActivity`
+  - `MapMode` enum (`NONE` / `PICKUP` / `DROPOFF`) drives map click behaviour
+  - Active mode button fills blue; tapping a second time deactivates it
+  - Map tap → places coloured marker (red=pickup, green=dropoff), animates camera, fills lat/lng fields
+  - `reverseGeocode()` auto-fills address field via Android `Geocoder` (async on API 33+, coroutine on lower)
+  - "Use Current Location" button now delegates to `setPickupFromMap()` so it also places the marker
+  - All 5 hint strings added to `strings.xml`
 
 ---
 

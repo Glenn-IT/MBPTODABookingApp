@@ -3,6 +3,7 @@ package com.example.mbptodabookingapp.data.repository
 import android.content.Context
 import com.example.mbptodabookingapp.data.api.ApiService
 import com.example.mbptodabookingapp.data.local.PrefsManager
+import com.example.mbptodabookingapp.data.models.FcmTokenRequest
 import com.example.mbptodabookingapp.data.models.LoginRequest
 import com.example.mbptodabookingapp.data.models.LoginResponse
 import com.example.mbptodabookingapp.data.models.RegisterRequest
@@ -65,12 +66,33 @@ class AuthRepository(
             if (response.success && response.data != null) {
                 // Persist token + user — ApiClient interceptor reads this on every request
                 PrefsManager.saveLoginData(context, response.data.token, response.data.user)
+                // Sync FCM token that may have been stored before login (4.9 — token lifecycle)
+                syncFcmTokenIfAvailable()
                 Resource.Success(response.data)
             } else {
                 Resource.Error(response.message)
             }
         } catch (e: Exception) {
             Resource.Error(parseApiError(e))
+        }
+    }
+
+    /**
+     * Registers the locally stored FCM device token with the backend after login.
+     *
+     * FCM may issue a token (via onNewToken) before the user ever logs in.
+     * Calling this right after login ensures the server always has a valid token
+     * so it can send push notifications to this device.
+     *
+     * See: docs/api/FCM.md → Full Token Lifecycle · 4.9.3 / 4.9.5
+     */
+    private suspend fun syncFcmTokenIfAvailable() {
+        val fcmToken = PrefsManager.getFcmToken(context) ?: return
+        try {
+            api.updateFcmToken(FcmTokenRequest(fcmToken))
+        } catch (_: Exception) {
+            // Non-critical — notifications won't work until onNewToken fires again,
+            // but the rest of the app is fully functional.
         }
     }
 

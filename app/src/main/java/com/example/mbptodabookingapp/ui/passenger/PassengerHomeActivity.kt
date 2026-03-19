@@ -3,6 +3,7 @@ package com.example.mbptodabookingapp.ui.passenger
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -27,7 +28,8 @@ class PassengerHomeActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private lateinit var binding: ActivityPassengerHomeBinding
     private var googleMap: GoogleMap? = null
-    private val LOCATION_REQUEST = 1001
+    private val LOCATION_REQUEST     = 1001
+    private val NOTIFICATION_REQUEST = 1002
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,6 +44,23 @@ class PassengerHomeActivity : AppCompatActivity(), OnMapReadyCallback {
 
         binding.fabBookRide.setOnClickListener {
             startActivity(Intent(this, BookRideActivity::class.java))
+        }
+
+        // Request POST_NOTIFICATIONS permission on Android 13+
+        requestNotificationPermission()
+    }
+
+    /** Requests the POST_NOTIFICATIONS permission at runtime (required on Android 13 / API 33+). */
+    private fun requestNotificationPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
+                != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(
+                    this,
+                    arrayOf(Manifest.permission.POST_NOTIFICATIONS),
+                    NOTIFICATION_REQUEST
+                )
+            }
         }
     }
 
@@ -76,11 +95,17 @@ class PassengerHomeActivity : AppCompatActivity(), OnMapReadyCallback {
         requestCode: Int, permissions: Array<out String>, grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == LOCATION_REQUEST &&
-            grantResults.firstOrNull() == PackageManager.PERMISSION_GRANTED) {
-            enableMyLocation()
-        } else {
-            Toast.makeText(this, "Location permission needed for map.", Toast.LENGTH_SHORT).show()
+        when (requestCode) {
+            LOCATION_REQUEST -> {
+                if (grantResults.firstOrNull() == PackageManager.PERMISSION_GRANTED) {
+                    enableMyLocation()
+                } else {
+                    Toast.makeText(this, "Location permission needed for map.", Toast.LENGTH_SHORT).show()
+                }
+            }
+            NOTIFICATION_REQUEST -> {
+                // Notification permission result — no action needed; system handles it
+            }
         }
     }
 

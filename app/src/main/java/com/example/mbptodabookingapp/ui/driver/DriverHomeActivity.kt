@@ -3,6 +3,7 @@ package com.example.mbptodabookingapp.ui.driver
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -32,6 +33,7 @@ class DriverHomeActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var viewModel: DriverViewModel
     private lateinit var adapter: RideRequestsAdapter
     private var googleMap: GoogleMap? = null
+    private val NOTIFICATION_REQUEST = 2001
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,6 +50,23 @@ class DriverHomeActivity : AppCompatActivity(), OnMapReadyCallback {
 
         binding.btnRefresh.setOnClickListener { viewModel.fetchRequests() }
         viewModel.fetchRequests()
+
+        // Request POST_NOTIFICATIONS permission on Android 13+
+        requestNotificationPermission()
+    }
+
+    /** Requests the POST_NOTIFICATIONS permission at runtime (required on Android 13 / API 33+). */
+    private fun requestNotificationPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
+                != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(
+                    this,
+                    arrayOf(Manifest.permission.POST_NOTIFICATIONS),
+                    NOTIFICATION_REQUEST
+                )
+            }
+        }
     }
 
     private fun setupRecyclerView() {

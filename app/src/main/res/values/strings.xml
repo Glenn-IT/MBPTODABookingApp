@@ -27,6 +27,12 @@
     <string name="use_current_location">Use Current Location as Pickup</string>
     <string name="ride_status">Ride Status</string>
     <string name="ride_history">Ride History</string>
+    <!-- Map picker (4.10.6) -->
+    <string name="set_pickup">Set Pickup</string>
+    <string name="set_dropoff">Set Dropoff</string>
+    <string name="map_tap_hint_none">Tap \'Set Pickup\' or \'Set Dropoff\', then tap on the map</string>
+    <string name="map_tap_hint_pickup">Tap the map to place your pickup marker</string>
+    <string name="map_tap_hint_dropoff">Tap the map to place your dropoff marker</string>
     <!-- Driver -->
     <string name="driver_home">Driver Home</string>
     <string name="ride_requests">Ride Requests</string>
