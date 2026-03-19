@@ -55,6 +55,23 @@ dependencies {
     implementation(libs.firebase.analytics)
     implementation(libs.firebase.auth)
     implementation(libs.firebase.firestore)
+    implementation(libs.firebase.messaging)      // FCM push notifications
+
+    // Retrofit + OkHttp (networking)
+    implementation(libs.retrofit)
+    implementation(libs.retrofit.gson)           // Gson converter
+    implementation(libs.okhttp.logging)          // HTTP request/response logging
+
+    // Google Maps + Location
+    implementation(libs.play.services.maps)
+    implementation(libs.play.services.location)
+
+    // Jetpack ViewModel + LiveData
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
+    implementation(libs.androidx.lifecycle.livedata.ktx)
+
+    // Kotlin Coroutines
+    implementation(libs.kotlinx.coroutines.android)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
