@@ -456,79 +456,79 @@ Body: { "email": "driver@test.com", "password": "password123" }
 
 ### 4.1 Project Setup
 
-- [ ] **4.1.1** Create Kotlin Android project in Android Studio
-- [ ] **4.1.2** Add dependencies to `build.gradle.kts`:
+- [x] **4.1.1** Create Kotlin Android project in Android Studio
+- [x] **4.1.2** Add dependencies to `build.gradle.kts`:
   - Retrofit2 + OkHttp (networking)
   - Gson converter (JSON parsing)
   - Google Maps SDK
   - Firebase Messaging
   - ViewModel + LiveData (Jetpack)
   - DataStore or SharedPreferences (token storage)
-- [ ] **4.1.3** Create `utils/Constants.kt` — base API URL, keys
+- [x] **4.1.3** Create `utils/Constants.kt` — base API URL, keys
 
 ### 4.2 Networking Layer
 
-- [ ] **4.2.1** Create `data/api/ApiClient.kt` — Retrofit instance with base URL + auth interceptor
-- [ ] **4.2.2** Create `data/api/ApiService.kt` — all Retrofit interface methods
-- [ ] **4.2.3** Create `data/api/ApiResponse.kt` — generic wrapper `data class ApiResponse<T>`
-- [ ] **4.2.4** Create `data/local/PrefsManager.kt` — save/get JWT token and user role
+- [x] **4.2.1** Create `data/api/ApiClient.kt` — Retrofit instance with base URL + auth interceptor
+- [x] **4.2.2** Create `data/api/ApiService.kt` — all Retrofit interface methods
+- [x] **4.2.3** Create `data/api/ApiResponse.kt` — generic wrapper `data class ApiResponse<T>`
+- [x] **4.2.4** Create `data/local/PrefsManager.kt` — save/get JWT token and user role
 
 ### 4.3 Data Models (Kotlin data classes)
 
-- [ ] **4.3.1** `data/models/User.kt`
-- [ ] **4.3.2** `data/models/Booking.kt`
-- [ ] **4.3.3** `data/models/Location.kt`
+- [x] **4.3.1** `data/models/User.kt`
+- [x] **4.3.2** `data/models/Booking.kt`
+- [x] **4.3.3** `data/models/Location.kt` _(implemented as `DriverModels.kt`, `AdminModels.kt`, `AuthModels.kt`, `FcmModels.kt`)_
 
 ### 4.4 Repositories
 
-- [ ] **4.4.1** `data/repository/AuthRepository.kt`
-- [ ] **4.4.2** `data/repository/BookingRepository.kt`
-- [ ] **4.4.3** `data/repository/UserRepository.kt`
+- [x] **4.4.1** `data/repository/AuthRepository.kt`
+- [x] **4.4.2** `data/repository/BookingRepository.kt`
+- [x] **4.4.3** `data/repository/UserRepository.kt` _(+ `AdminRepository.kt`, `BaseRepository.kt`)_
 
 ### 4.5 Auth Screens
 
-- [ ] **4.5.1** Build `LoginActivity.kt` + layout XML
-- [ ] **4.5.2** Build `RegisterActivity.kt` + layout XML (select role: passenger/driver)
-- [ ] **4.5.3** Create `AuthViewModel.kt` — call AuthRepository, expose LiveData
-- [ ] **4.5.4** On login success: save JWT token, redirect to role-appropriate Home screen
+- [x] **4.5.1** Build `LoginActivity.kt` + layout XML
+- [x] **4.5.2** Build `RegisterActivity.kt` + layout XML (select role: passenger/driver)
+- [x] **4.5.3** Create `AuthViewModel.kt` — call AuthRepository, expose LiveData
+- [x] **4.5.4** On login success: save JWT token, redirect to role-appropriate Home screen
 
 ### 4.6 Passenger Screens
 
-- [ ] **4.6.1** Build `PassengerHomeActivity.kt` — Google Map fragment showing current location
-- [ ] **4.6.2** Build `BookRideActivity.kt` — pick pickup & drop-off on map, request ride
-- [ ] **4.6.3** Build `RideStatusActivity.kt` — polling or push status display
-- [ ] **4.6.4** Create `PassengerViewModel.kt`
+- [x] **4.6.1** Build `PassengerHomeActivity.kt` — Google Map fragment showing current location
+- [x] **4.6.2** Build `BookRideActivity.kt` — pick pickup & drop-off on map, request ride
+- [x] **4.6.3** Build `RideStatusActivity.kt` — polling or push status display
+- [x] **4.6.4** Create `PassengerViewModel.kt`
 
 ### 4.7 Driver Screens
 
-- [ ] **4.7.1** Build `DriverHomeActivity.kt` — toggle online/offline, show map
-- [ ] **4.7.2** Build `RideRequestActivity.kt` — show incoming request, accept/reject buttons
-- [ ] **4.7.3** Build `ActiveRideActivity.kt` — show passenger pickup on map, mark complete
-- [ ] **4.7.4** Create `DriverViewModel.kt`
+- [x] **4.7.1** Build `DriverHomeActivity.kt` — toggle online/offline, show map
+- [x] **4.7.2** Build `RideRequestActivity.kt` — show incoming request, accept/reject buttons
+- [x] **4.7.3** Build `ActiveRideActivity.kt` — show passenger pickup on map, mark complete
+- [x] **4.7.4** Create `DriverViewModel.kt`
 
 ### 4.8 Admin Screens
 
-- [ ] **4.8.1** Build `AdminDashboardActivity.kt` — stats overview
-- [ ] **4.8.2** Build `ManageUsersActivity.kt` — list, approve, deactivate users
-- [ ] **4.8.3** Create `AdminViewModel.kt`
+- [x] **4.8.1** Build `AdminDashboardActivity.kt` — stats overview
+- [x] **4.8.2** Build `ManageUsersActivity.kt` — list, approve, deactivate users
+- [x] **4.8.3** Create `AdminViewModel.kt`
 
 ### 4.9 Firebase Cloud Messaging (FCM)
 
-- [ ] **4.9.1** Create Firebase project at [console.firebase.google.com](https://console.firebase.google.com)
-- [ ] **4.9.2** Add Android app to Firebase project, download `google-services.json`
-- [ ] **4.9.3** Implement `PTODAFirebaseMessagingService.kt`
+- [x] **4.9.1** Create Firebase project at [console.firebase.google.com](https://console.firebase.google.com)
+- [x] **4.9.2** Add Android app to Firebase project, download `google-services.json`
+- [x] **4.9.3** Implement `PTODAFirebaseMessagingService.kt`
   - Override `onNewToken` — send token to API (`PUT /user/fcm-token`)
   - Override `onMessageReceived` — show notification to user
-- [ ] **4.9.4** Register service in `AndroidManifest.xml`
+- [x] **4.9.4** Register service in `AndroidManifest.xml`
 - [ ] **4.9.5** Test push notification: driver receives notification on new booking
 
 ### 4.10 Google Maps API
 
 - [ ] **4.10.1** Enable Maps SDK for Android in Google Cloud Console
-- [ ] **4.10.2** Get API key, add to `AndroidManifest.xml` as `<meta-data>`
-- [ ] **4.10.3** Add `SupportMapFragment` in passenger and driver screens
-- [ ] **4.10.4** Implement location permission request (`ACCESS_FINE_LOCATION`)
-- [ ] **4.10.5** Show user's current location on map with `FusedLocationProviderClient`
+- [~] **4.10.2** Get API key, add to `AndroidManifest.xml` as `<meta-data>` _(placeholder added — replace `YOUR_MAPS_API_KEY`)_
+- [x] **4.10.3** Add `SupportMapFragment` in passenger and driver screens
+- [x] **4.10.4** Implement location permission request (`ACCESS_FINE_LOCATION`)
+- [x] **4.10.5** Show user's current location on map with `FusedLocationProviderClient`
 - [ ] **4.10.6** Implement place picker / tap-to-set-marker for pickup & drop-off
 
 ---
@@ -556,4 +556,4 @@ Body: { "email": "driver@test.com", "password": "password123" }
 
 ---
 
-_Last updated: 2026-03-17 — Phase 3 backend marked complete after code review._
+_Last updated: 2026-03-19 — Phase 4.1–4.9 Android app built. Pending: Gradle sync, Maps API key, FCM test, integration testing._

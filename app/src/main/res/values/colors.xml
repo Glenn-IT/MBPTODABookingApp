@@ -1,10 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Brand -->
+    <color name="colorPrimary">#1565C0</color>
+    <color name="colorPrimaryDark">#003c8f</color>
+    <color name="colorAccent">#FF8F00</color>
+    <!-- Status colors -->
+    <color name="statusRequested">#FF8F00</color>
+    <color name="statusAccepted">#1565C0</color>
+    <color name="statusInProgress">#6A1B9A</color>
+    <color name="statusCompleted">#2E7D32</color>
+    <color name="statusRejected">#C62828</color>
+    <color name="statusCancelled">#757575</color>
+    <!-- Base -->
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+    <color name="grey">#757575</color>
+    <color name="lightGrey">#F5F5F5</color>
+    <!-- Legacy -->
     <color name="purple_200">#FFBB86FC</color>
     <color name="purple_500">#FF6200EE</color>
     <color name="purple_700">#FF3700B3</color>
     <color name="teal_200">#FF03DAC5</color>
     <color name="teal_700">#FF018786</color>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
 </resources>
