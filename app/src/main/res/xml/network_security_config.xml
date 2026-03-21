@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Network Security Configuration
+    Allows HTTP (cleartext) traffic to the local PC running the XAMPP/PHP backend.
+    IMPORTANT: Remove or restrict this before publishing to production.
+    See: docs/flows/ANDROID_SETUP.md → Network Security
+-->
+<network-security-config>
+    <domain-config cleartextTrafficPermitted="true">
+        <!-- PC running XAMPP Apache or PHP dev server on local Wi-Fi -->
+        <domain includeSubdomains="false">192.168.0.100</domain>
+    </domain-config>
+</network-security-config>
+
