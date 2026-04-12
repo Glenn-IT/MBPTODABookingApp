@@ -52,7 +52,13 @@ class DriverRequestsFragment : Fragment() {
         adapter = RideRequestsAdapter { booking ->
             startActivity(
                 Intent(requireContext(), RideRequestActivity::class.java)
-                    .putExtra(RideRequestActivity.EXTRA_BOOKING_ID, booking.id)
+                    .putExtra(RideRequestActivity.EXTRA_BOOKING_ID,       booking.id)
+                    .putExtra(RideRequestActivity.EXTRA_PICKUP_ADDRESS,   booking.pickup_address)
+                    .putExtra(RideRequestActivity.EXTRA_DROPOFF_ADDRESS,  booking.dropoff_address)
+                    .putExtra(RideRequestActivity.EXTRA_PICKUP_LAT,       booking.pickup_lat)
+                    .putExtra(RideRequestActivity.EXTRA_PICKUP_LNG,       booking.pickup_lng)
+                    .putExtra(RideRequestActivity.EXTRA_DROPOFF_LAT,      booking.dropoff_lat)
+                    .putExtra(RideRequestActivity.EXTRA_DROPOFF_LNG,      booking.dropoff_lng)
             )
         }
         binding.rvRequests.layoutManager = LinearLayoutManager(requireContext())

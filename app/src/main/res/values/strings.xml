@@ -90,6 +90,8 @@
     <string name="active_ride_complete_success">✅ Ride completed successfully!</string>
     <string name="active_ride_status_accepted">Accepted — Heading to Pickup</string>
     <string name="active_ride_status_in_progress">In Progress</string>
+    <string name="ride_request_status_pending">Pending Request</string>
+    <string name="btn_view_request">View Request</string>
     <string name="ride_requests">Ride Requests</string>
     <string name="ride_request_detail">Ride Request</string>
     <string name="active_ride">Active Ride</string>

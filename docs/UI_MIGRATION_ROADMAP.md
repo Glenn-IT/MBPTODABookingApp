@@ -446,5 +446,5 @@ toolbar style, input field style.
 
 ---
 
-_Last updated: 2026-04-12 — Phase 6 complete + BUG-014 Active Ride fix + BUG-015 Status tab completed count fix_
+_Last updated: 2026-04-12 — Phase 6 complete + BUG-014 Active Ride fix + BUG-015 Status tab completed count fix + BUG-016 Ride request detail blank screen fix_
 

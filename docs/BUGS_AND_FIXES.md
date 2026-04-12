@@ -428,5 +428,21 @@ _Add new entries above this line as issues are discovered._
 
 ---
 
+### [BUG-016] Ride request detail screen shows blank data when opened from Requests tab
+
+- **Date:** 2026-04-12
+- **Phase:** Phase 6 — Driver BottomNav Shell
+- **File(s) affected:** `RideRequestActivity.kt`, `DriverRequestsFragment.kt`, `activity_ride_request.xml`
+- **Description:** Tapping **View Request** on a list item in the Requests tab opened `RideRequestActivity` correctly, but all fields showed "—" (default placeholder values). Booking ID, pickup address, and dropoff address never populated.
+- **Root cause:** `RideRequestActivity` was calling `GET /bookings/{id}` via a new `DriverViewModel` instance to populate its UI. The PHP API rejects this call for **unassigned** bookings (`driver_id = null`) when called with a driver's JWT — the requesting driver is not the assigned driver because no driver has been assigned yet. The `observeViewModel()` handler had no `Resource.Error` toast for the booking fetch, so the failure was silent and the UI stayed blank. All the data needed (booking ID, addresses, lat/lng) was already in memory in the adapter — no round-trip was ever necessary.
+- **Fix applied:**
+  1. **`DriverRequestsFragment`** — passes the full booking data as Intent extras when launching `RideRequestActivity`: `EXTRA_BOOKING_ID`, `EXTRA_PICKUP_ADDRESS`, `EXTRA_DROPOFF_ADDRESS`, `EXTRA_PICKUP_LAT`, `EXTRA_PICKUP_LNG`, `EXTRA_DROPOFF_LAT`, `EXTRA_DROPOFF_LNG`.
+  2. **`RideRequestActivity`** — added 7 `EXTRA_*` constants to `companion object`. Added `populateFromIntent()` called in `onCreate` — reads all fields and populates `tvBookingId`, `tvPickup`, `tvDropoff` immediately. Caches `LatLng` objects for map markers. Removed `fetchBooking()` call — no longer needed. `onMapReady` now adds both pickup (blue) and dropoff (green) markers from the cached `LatLng` values. Observer renamed to `observeActionState()` — only handles Accept/Reject result, not booking data display.
+  3. **`activity_ride_request.xml`** — redesigned to match `ActiveRideActivity` card style: labeled pickup/dropoff rows, Booking ID + "Pending Request" status badge, proper string resources, no hardcoded placeholder strings.
+  4. **`item_ride_request.xml`** — replaced hardcoded `android:text="View Request"` with `@string/btn_view_request`.
+- **Prevention tip:** Never make a second API call to display data that is already fully available in the calling screen's ViewModel/adapter. Pass it via Intent extras. Only make a fetch call when the data is genuinely not available (e.g. opened from an FCM notification that only has a booking ID).
+
+---
+
 _Last updated: 2026-04-12_
 _Add new entries above this line as issues are discovered._

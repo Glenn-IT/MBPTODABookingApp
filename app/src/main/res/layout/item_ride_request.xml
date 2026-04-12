@@ -42,7 +42,7 @@
             android:id="@+id/btnViewRequest"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="View Request" />
+            android:text="@string/btn_view_request" />
 
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>
