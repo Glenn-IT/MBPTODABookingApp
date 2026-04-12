@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <!-- ── Toolbar — ID unchanged ────────────────────────────────────── -->
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -23,15 +24,61 @@
         android:orientation="vertical"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <!-- Map — top half -->
+        <!-- ── Map — hidden until Google Maps API is activated ─────────
+             ID kept so BookRideActivity.kt compiles without changes.
+             Re-enable by restoring layout_weight="1" and removing the
+             placeholder card below once the API key is paid/activated. -->
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/map"
             android:name="com.google.android.gms.maps.SupportMapFragment"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1" />
+            android:layout_weight="0" />
 
-        <!-- ── Map Tap Mode Toggle ─────────────────────────────── -->
+        <!-- ── Map Placeholder — remove this block when API is active ── -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="160dp"
+            app:cardBackgroundColor="#E3F2FD"
+            app:cardCornerRadius="0dp"
+            app:cardElevation="0dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="6dp"
+                    android:text="@string/map_placeholder_icon"
+                    android:textSize="32sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="4dp"
+                    android:gravity="center"
+                    android:text="@string/map_placeholder_title"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="@string/map_placeholder_body"
+                    android:textColor="@color/grey_text"
+                    android:textSize="12sp" />
+
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- ── Map Tap Mode Toggle — ALL IDs unchanged ───────────────── -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -48,7 +95,6 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
-                <!-- Tap mode: Pickup -->
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnModePickup"
                     style="@style/Widget.MaterialComponents.Button.OutlinedButton"
@@ -58,7 +104,6 @@
                     android:layout_weight="1"
                     android:text="@string/set_pickup" />
 
-                <!-- Tap mode: Dropoff -->
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnModeDropoff"
                     style="@style/Widget.MaterialComponents.Button.OutlinedButton"
@@ -67,10 +112,8 @@
                     android:layout_marginStart="4dp"
                     android:layout_weight="1"
                     android:text="@string/set_dropoff" />
-
             </LinearLayout>
 
-            <!-- Dynamic hint that updates based on active map mode -->
             <TextView
                 android:id="@+id/tvMapHint"
                 android:layout_width="match_parent"
@@ -81,149 +124,287 @@
                 android:textColor="@color/grey"
                 android:textSize="12sp" />
 
+            <!-- ⚠️ API notice — remove when Google Maps API is activated -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:background="#FFF8E1"
+                android:gravity="center"
+                android:padding="6dp"
+                android:text="@string/map_api_notice"
+                android:textColor="#E65100"
+                android:textSize="11sp" />
         </LinearLayout>
 
-        <!-- ── Booking Form ───────────────────────────────────── -->
+        <!-- ── Booking Form ───────────────────────────────────────────── -->
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1">
+            android:layout_weight="1"
+            android:background="@color/lightGrey">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="16dp">
+                android:padding="12dp">
 
-                <!-- Pickup section -->
-                <TextView
+                <!-- ── Sample Data Card ───────────────────────────────── -->
+                <!-- Remove this card once Google Maps API is activated   -->
+                <com.google.android.material.card.MaterialCardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="4dp"
-                    android:text="Pickup"
-                    android:textColor="@color/colorPrimary"
-                    android:textSize="14sp"
-                    android:textStyle="bold" />
+                    android:layout_marginBottom="10dp"
+                    app:cardBackgroundColor="#FFF8E1"
+                    app:cardCornerRadius="8dp"
+                    app:cardElevation="2dp"
+                    app:strokeColor="#FFB300"
+                    app:strokeWidth="1dp">
 
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/tilPickupAddress"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
-                    android:hint="@string/pickup_address">
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/etPickupAddress"
+                    <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
-                    android:orientation="horizontal">
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/tilPickupLat"
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginEnd="4dp"
-                        android:layout_weight="1"
-                        android:hint="@string/pickup_lat">
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/etPickupLat"
+                        android:orientation="vertical"
+                        android:padding="14dp">
+
+                        <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:inputType="numberDecimal" />
-                    </com.google.android.material.textfield.TextInputLayout>
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/tilPickupLng"
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="4dp"
-                        android:layout_weight="1"
-                        android:hint="@string/pickup_lng">
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/etPickupLng"
+                            android:layout_marginBottom="4dp"
+                            android:text="@string/sample_data_title"
+                            android:textColor="#E65100"
+                            android:textSize="13sp"
+                            android:textStyle="bold" />
+
+                        <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:inputType="numberDecimal" />
-                    </com.google.android.material.textfield.TextInputLayout>
-                </LinearLayout>
+                            android:layout_marginBottom="10dp"
+                            android:text="@string/sample_data_body"
+                            android:textColor="@color/grey_text"
+                            android:textSize="12sp" />
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnUseCurrentLocation"
-                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnUseSampleData"
+                            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/sample_data_btn" />
+
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- ── Pickup Card ────────────────────────────────────── -->
+                <com.google.android.material.card.MaterialCardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="16dp"
-                    android:text="@string/use_current_location" />
+                    android:layout_marginBottom="10dp"
+                    app:cardCornerRadius="8dp"
+                    app:cardElevation="3dp">
 
-                <!-- Dropoff section -->
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="4dp"
-                    android:text="Dropoff"
-                    android:textColor="@color/statusCompleted"
-                    android:textSize="14sp"
-                    android:textStyle="bold" />
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/tilDropoffAddress"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
-                    android:hint="@string/dropoff_address">
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/etDropoffAddress"
+                    <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
-                </com.google.android.material.textfield.TextInputLayout>
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="16dp">
 
-                <LinearLayout
+                        <!-- Section header -->
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="10dp"
+                            android:drawablePadding="6dp"
+                            android:text="@string/section_pickup"
+                            android:textColor="@color/colorPrimary"
+                            android:textSize="13sp"
+                            android:textStyle="bold"
+                            android:letterSpacing="0.08" />
+
+                        <!-- Pickup address — ID unchanged -->
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/tilPickupAddress"
+                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="8dp"
+                            android:hint="@string/pickup_address">
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/etPickupAddress"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content" />
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <!-- Lat / Lng row — IDs unchanged -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="10dp"
+                            android:baselineAligned="false"
+                            android:orientation="horizontal">
+                            <com.google.android.material.textfield.TextInputLayout
+                                android:id="@+id/tilPickupLat"
+                                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="4dp"
+                                android:layout_weight="1"
+                                android:hint="@string/pickup_lat">
+                                <com.google.android.material.textfield.TextInputEditText
+                                    android:id="@+id/etPickupLat"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:inputType="numberDecimal" />
+                            </com.google.android.material.textfield.TextInputLayout>
+                            <com.google.android.material.textfield.TextInputLayout
+                                android:id="@+id/tilPickupLng"
+                                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="4dp"
+                                android:layout_weight="1"
+                                android:hint="@string/pickup_lng">
+                                <com.google.android.material.textfield.TextInputEditText
+                                    android:id="@+id/etPickupLng"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:inputType="numberDecimal" />
+                            </com.google.android.material.textfield.TextInputLayout>
+                        </LinearLayout>
+
+                        <!-- Use Current Location — ID unchanged -->
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnUseCurrentLocation"
+                            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/use_current_location" />
+
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- ── Dropoff Card ───────────────────────────────────── -->
+                <com.google.android.material.card.MaterialCardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="16dp"
-                    android:orientation="horizontal">
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/tilDropoffLat"
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="4dp"
-                        android:layout_weight="1"
-                        android:hint="@string/dropoff_lat">
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/etDropoffLat"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:inputType="numberDecimal" />
-                    </com.google.android.material.textfield.TextInputLayout>
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/tilDropoffLng"
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="4dp"
-                        android:layout_weight="1"
-                        android:hint="@string/dropoff_lng">
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/etDropoffLng"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:inputType="numberDecimal" />
-                    </com.google.android.material.textfield.TextInputLayout>
-                </LinearLayout>
+                    android:layout_marginBottom="10dp"
+                    app:cardCornerRadius="8dp"
+                    app:cardElevation="3dp">
 
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+
+                        <!-- Section header -->
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="10dp"
+                            android:text="@string/section_dropoff"
+                            android:textColor="@color/statusCompleted"
+                            android:textSize="13sp"
+                            android:textStyle="bold"
+                            android:letterSpacing="0.08" />
+
+                        <!-- Dropoff address — ID unchanged -->
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/tilDropoffAddress"
+                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="8dp"
+                            android:hint="@string/dropoff_address">
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/etDropoffAddress"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content" />
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <!-- Lat / Lng row — IDs unchanged -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:baselineAligned="false"
+                            android:orientation="horizontal">
+                            <com.google.android.material.textfield.TextInputLayout
+                                android:id="@+id/tilDropoffLat"
+                                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="4dp"
+                                android:layout_weight="1"
+                                android:hint="@string/dropoff_lat">
+                                <com.google.android.material.textfield.TextInputEditText
+                                    android:id="@+id/etDropoffLat"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:inputType="numberDecimal" />
+                            </com.google.android.material.textfield.TextInputLayout>
+                            <com.google.android.material.textfield.TextInputLayout
+                                android:id="@+id/tilDropoffLng"
+                                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="4dp"
+                                android:layout_weight="1"
+                                android:hint="@string/dropoff_lng">
+                                <com.google.android.material.textfield.TextInputEditText
+                                    android:id="@+id/etDropoffLng"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:inputType="numberDecimal" />
+                            </com.google.android.material.textfield.TextInputLayout>
+                        </LinearLayout>
+
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- ── Estimated Fare Card (prototype style, static UI) ─ -->
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dp"
+                    app:cardBackgroundColor="@color/colorPrimary"
+                    app:cardCornerRadius="8dp"
+                    app:cardElevation="2dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:padding="14dp">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/estimated_fare_label"
+                            android:textColor="@color/white"
+                            android:textSize="14sp" />
+
+                        <TextView
+                            android:id="@+id/tvEstimatedFare"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/estimated_fare_placeholder"
+                            android:textColor="@color/white"
+                            android:textSize="18sp"
+                            android:textStyle="bold" />
+
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- ── Request Ride button + progress — IDs unchanged ─── -->
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnRequestRide"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="8dp"
+                    android:paddingTop="12dp"
+                    android:paddingBottom="12dp"
                     android:text="@string/request_ride" />
 
                 <ProgressBar

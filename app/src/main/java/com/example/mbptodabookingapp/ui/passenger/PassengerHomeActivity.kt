@@ -7,6 +7,7 @@ import android.os.Build
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -23,7 +24,7 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 
-/** Passenger home — shows map with current location + FAB to book a ride. */
+/** Passenger home — map + FAB on Dashboard tab, ride history on History tab. */
 class PassengerHomeActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private lateinit var binding: ActivityPassengerHomeBinding
@@ -39,30 +40,61 @@ class PassengerHomeActivity : AppCompatActivity(), OnMapReadyCallback {
         setSupportActionBar(binding.toolbar)
         supportActionBar?.title = "Hello, ${PrefsManager.getUserName(this) ?: "Passenger"}"
 
-        val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
-        mapFragment.getMapAsync(this)
+        // Safe cast — maps API may not be active yet
+        val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as? SupportMapFragment
+        mapFragment?.getMapAsync(this)
 
+        // FAB still works as a quick shortcut on Dashboard
         binding.fabBookRide.setOnClickListener {
             startActivity(Intent(this, BookRideActivity::class.java))
         }
 
-        // Request POST_NOTIFICATIONS permission on Android 13+
+        setupBottomNav()
         requestNotificationPermission()
     }
 
-    /** Requests the POST_NOTIFICATIONS permission at runtime (required on Android 13 / API 33+). */
-    private fun requestNotificationPermission() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
-                != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(
-                    this,
-                    arrayOf(Manifest.permission.POST_NOTIFICATIONS),
-                    NOTIFICATION_REQUEST
-                )
+    // ── BottomNav ─────────────────────────────────────────────────────────────
+
+    private fun setupBottomNav() {
+        binding.bottomNav.setOnItemSelectedListener { item ->
+            when (item.itemId) {
+
+                R.id.nav_dashboard -> {
+                    // Show map + FAB, hide fragment overlay
+                    binding.fragmentContainer.visibility = View.GONE
+                    binding.fabBookRide.visibility       = View.VISIBLE
+                    true
+                }
+
+                R.id.nav_book_ride -> {
+                    // Navigate to booking screen — don't change tab selection
+                    startActivity(Intent(this, BookRideActivity::class.java))
+                    false   // return false = don't highlight this tab
+                }
+
+                R.id.nav_history -> {
+                    // Show history fragment, hide FAB
+                    binding.fabBookRide.visibility       = View.GONE
+                    binding.fragmentContainer.visibility = View.VISIBLE
+                    showHistoryFragment()
+                    true
+                }
+
+                else -> false
             }
         }
     }
+
+    private fun showHistoryFragment() {
+        // Only add if not already added (avoids stacking on repeated taps)
+        if (supportFragmentManager.findFragmentByTag("history") == null) {
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.fragmentContainer, RideHistoryFragment(), "history")
+                .commit()
+        }
+    }
+
+    // ── Map (existing logic unchanged) ───────────────────────────────────────
 
     override fun onMapReady(map: GoogleMap) {
         googleMap = map
@@ -91,6 +123,20 @@ class PassengerHomeActivity : AppCompatActivity(), OnMapReadyCallback {
             }
     }
 
+    /** Request POST_NOTIFICATIONS permission on Android 13+. */
+    private fun requestNotificationPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
+                != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(
+                    this,
+                    arrayOf(Manifest.permission.POST_NOTIFICATIONS),
+                    NOTIFICATION_REQUEST
+                )
+            }
+        }
+    }
+
     override fun onRequestPermissionsResult(
         requestCode: Int, permissions: Array<out String>, grantResults: IntArray
     ) {
@@ -103,11 +149,10 @@ class PassengerHomeActivity : AppCompatActivity(), OnMapReadyCallback {
                     Toast.makeText(this, "Location permission needed for map.", Toast.LENGTH_SHORT).show()
                 }
             }
-            NOTIFICATION_REQUEST -> {
-                // Notification permission result — no action needed; system handles it
-            }
         }
     }
+
+    // ── Options menu (logout) — unchanged ────────────────────────────────────
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_home, menu)
