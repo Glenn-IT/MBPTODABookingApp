@@ -16,7 +16,7 @@
 | Phase 0 | Analysis & Feasibility | ✅ Done | 2026-04-12 |
 | Phase 1 | Resource Setup (colors, fonts) | ✅ Done | 2026-04-12 |
 | Phase 2 | Login Screen Upgrade | ✅ Done | 2026-04-12 |
-| Phase 3 | Register Screen Polish | ⬜ Pending | — |
+| Phase 3 | Register Screen Polish | ✅ Done | 2026-04-12 |
 | Phase 4 | Booking Screen Card UI | ⬜ Pending | — |
 | Phase 5 | Passenger BottomNav Shell | ⬜ Pending | — |
 | Phase 6 | Driver BottomNav Shell | ⬜ Pending | — |
@@ -119,29 +119,52 @@
 
 ---
 
-## 📝 Phase 3 — Register Screen Polish
+## 📝 Phase 3 — Register Screen Polish ✅
 
-**Status:** ⬜ Pending
+**Status:** Complete — 2026-04-12
 **Risk:** 🟢 Low
-**Files to edit:** `app/src/main/res/layout/activity_register.xml`
-**Files NOT to touch:** `RegisterActivity.kt`, `AuthViewModel.kt`
+**Files edited:** `app/src/main/res/layout/activity_register.xml`, `app/src/main/res/values/strings.xml`, `RegisterActivity.kt`
+**Files NOT touched:** `AuthViewModel.kt`, `AuthRepository.kt`
 
-### Goal:
-Apply consistent spacing, typography, and section headers to match the style established in Phase 2.
+### Changes made:
 
-### Changes:
-- Add section label above role selector
-- Consistent padding and margin values
-- Match button style to updated login screen
+#### `activity_register.xml`
+| Element | Before | After |
+|---|---|---|
+| Background | *(default)* | `@color/white` explicit |
+| Outer padding | `24dp` | `32dp` (matches login) |
+| Title | `22sp` plain black | `32sp` bold `@color/colorPrimary` |
+| Subtitle | *(none)* | `"Join PTODA today"` `15sp` `grey_text` |
+| Role selector | bare `RadioGroup` | wrapped in `MaterialCardView` (8dp radius, 2dp elevation) |
+| Section labels | single `"Select Role"` label | 3 section headers: `PERSONAL INFO`, `CHOOSE ROLE`, `DRIVER DETAILS` |
+| Driver section label | *(none)* | `tvDriverSectionLabel` (hidden by default, shown with driver fields) |
+| `btnRegister` | default padding | `12dp` top+bottom (matches login) |
+| `tvLogin` | bare text | `8dp` padding + `14sp` (matches `tvRegister` in login) |
 
-### Protected IDs:
-`etName`, `etEmail`, `etPassword`, `tilLicenseNo`, `tilVehicleNo`, `btnRegister`, `rgRole`, `rbPassenger`, `rbDriver`, `progressBar`, `tvLogin`
+#### `strings.xml` — 4 strings added
+| String | Value |
+|---|---|
+| `register_subtitle` | `"Join PTODA today"` |
+| `section_personal_info` | `"PERSONAL INFO"` |
+| `section_choose_role` | `"CHOOSE ROLE"` |
+| `section_driver_details` | `"DRIVER DETAILS"` |
+
+#### `RegisterActivity.kt` — 1 line added
+- `tvDriverSectionLabel` visibility toggled alongside `tilLicenseNo` / `tilVehicleNo`
+
+### Protected IDs — all verified intact:
+`tilName` ✅ `etName` ✅ `tilEmail` ✅ `etEmail` ✅ `tilPassword` ✅ `etPassword` ✅
+`rgRole` ✅ `rbPassenger` ✅ `rbDriver` ✅ `tilLicenseNo` ✅ `etLicenseNo` ✅
+`tilVehicleNo` ✅ `etVehicleNo` ✅ `btnRegister` ✅ `progressBar` ✅ `tvLogin` ✅
 
 ### Checklist:
-- [ ] Update `activity_register.xml`
+- [x] Updated `activity_register.xml`
+- [x] Added 4 new strings to `strings.xml`
+- [x] Updated `RegisterActivity.kt` to show/hide `tvDriverSectionLabel`
+- [x] `gradlew assembleDebug` → **BUILD SUCCESSFUL** ✅
 - [ ] Test: Passenger registration flow end-to-end
-- [ ] Test: Driver registration shows/hides license + vehicle fields
-- [ ] Build passes + manual test ✅
+- [ ] Test: Driver registration shows/hides license + vehicle + section label
+- [ ] Manual test on device ✅
 
 ---
 
@@ -371,5 +394,5 @@ toolbar style, input field style.
 
 ---
 
-_Last updated: 2026-04-12 — Phase 2 complete_
+_Last updated: 2026-04-12 — Phase 3 complete_
 

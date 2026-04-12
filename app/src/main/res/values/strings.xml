@@ -17,6 +17,10 @@
     <string name="app_subtitle">Mobile Booking System</string>
     <string name="forgot_password">Forgot Password?</string>
     <string name="app_logo_emoji">🚐</string>
+    <string name="register_subtitle">Join PTODA today</string>
+    <string name="section_personal_info">PERSONAL INFO</string>
+    <string name="section_choose_role">CHOOSE ROLE</string>
+    <string name="section_driver_details">DRIVER DETAILS</string>
     <!-- Passenger -->
     <string name="passenger_home">Passenger Home</string>
     <string name="book_ride">Book a Ride</string>

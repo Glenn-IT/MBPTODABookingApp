@@ -41,6 +41,8 @@ class RegisterActivity : AppCompatActivity() {
         binding.rgRole.setOnCheckedChangeListener { _, checkedId ->
             val isDriver = checkedId == binding.rbDriver.id
             val vis = if (isDriver) View.VISIBLE else View.GONE
+            // Section label added in Phase 3 — toggled alongside driver fields
+            binding.tvDriverSectionLabel.visibility = vis
             binding.tilLicenseNo.visibility = vis
             binding.tilVehicleNo.visibility  = vis
         }
