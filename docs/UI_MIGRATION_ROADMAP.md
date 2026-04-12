@@ -14,7 +14,7 @@
 | Phase | Name | Status | Date Completed |
 |---|---|---|---|
 | Phase 0 | Analysis & Feasibility | ✅ Done | 2026-04-12 |
-| Phase 1 | Resource Setup (colors, fonts) | ⬜ Pending | — |
+| Phase 1 | Resource Setup (colors, fonts) | ✅ Done | 2026-04-12 |
 | Phase 2 | Login Screen Upgrade | ⬜ Pending | — |
 | Phase 3 | Register Screen Polish | ⬜ Pending | — |
 | Phase 4 | Booking Screen Card UI | ⬜ Pending | — |
@@ -42,24 +42,43 @@
 
 ---
 
-## 🎨 Phase 1 — Resource Setup
+## 🎨 Phase 1 — Resource Setup ✅
 
-**Status:** ⬜ Pending
+**Status:** Complete — 2026-04-12
 **Risk:** 🟢 Zero
-**Files to edit:** `app/src/main/res/values/colors.xml`
+**Files edited:** `app/src/main/res/values/colors.xml`, `app/src/main/res/values/strings.xml`
 
-### Goal:
-Merge the prototype's color tokens into the main project so all future layout changes
-can reference them correctly.
+### Changes made:
 
-### Changes:
-- Add `grey_text` alias (`#757575`) — used extensively in prototype layouts
-- Align `colorAccent` (main `#FF8F00` → prototype `#FF6F00`) — optional, minor
+#### `colors.xml` — Added 3 prototype aliases (purely additive, same hex values as existing tokens)
+| New token | Value | Maps to existing |
+|---|---|---|
+| `grey_text` | `#757575` | = `grey` |
+| `green_status` | `#2E7D32` | = `statusCompleted` |
+| `red_status` | `#C62828` | = `statusRejected` |
+
+> `colorAccent` kept at `#FF8F00` (prototype diff of `#FF6F00` is cosmetic — not worth the risk to existing buttons).
+
+#### `strings.xml` — Added new strings (purely additive)
+| New string | Value | Used in |
+|---|---|---|
+| `app_subtitle` | `"Mobile Booking System"` | Phase 2 login screen |
+| `forgot_password` | `"Forgot Password?"` | Phase 2 login screen |
+| `tab_dashboard` | `"Dashboard"` | Phase 5 & 6 BottomNav |
+| `tab_book_ride` | `"Book Ride"` | Phase 5 BottomNav |
+| `tab_history` | `"History"` | Phase 5 BottomNav |
+| `tab_requests` | `"Requests"` | Phase 6 BottomNav |
+| `tab_status` | `"Status"` | Phase 6 BottomNav |
+| `tab_overview` | `"Overview"` | Phase 7 Admin tabs |
+| `tab_bookings` | `"Bookings"` | Phase 7 Admin tabs |
+| `tab_users` | `"Users"` | Phase 7 Admin tabs |
 
 ### Checklist:
-- [ ] Add `grey_text` to `colors.xml`
-- [ ] Verify no existing views break with the alias added
-- [ ] Build passes ✅
+- [x] Add `grey_text` to `colors.xml`
+- [x] Add `green_status` and `red_status` aliases to `colors.xml`
+- [x] Add Phase 2–7 string resources to `strings.xml`
+- [x] Verified no existing views reference broken — all changes are additive
+- [x] Build passes ✅
 
 ---
 
@@ -344,5 +363,5 @@ toolbar style, input field style.
 
 ---
 
-_Last updated: 2026-04-12_
+_Last updated: 2026-04-12 — Phase 1 complete_
 

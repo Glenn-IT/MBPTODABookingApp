@@ -16,6 +16,10 @@
     <color name="black">#000000</color>
     <color name="grey">#757575</color>
     <color name="lightGrey">#F5F5F5</color>
+    <!-- Prototype aliases — same values, added for layout compatibility -->
+    <color name="grey_text">#757575</color>
+    <color name="green_status">#2E7D32</color>
+    <color name="red_status">#C62828</color>
     <!-- Legacy -->
     <color name="purple_200">#FFBB86FC</color>
     <color name="purple_500">#FF6200EE</color>
