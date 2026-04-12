@@ -14,6 +14,12 @@ import com.example.mbptodabookingapp.utils.Resource
  * Loaded in DriverHomeActivity when the Status BottomNav tab is selected.
  *
  * Uses the shared DriverViewModel from the parent activity.
+ *
+ * FIX (BUG-014 follow-up):
+ *  - Pending count  → from viewModel.requests   (GET /driver/requests, status='requested')
+ *  - Completed count → from viewModel.driverBookings (GET /bookings, role-filtered, all statuses)
+ *  The old code read BOTH counts from viewModel.requests, which only ever contains
+ *  'requested' bookings — so completed was always 0.
  */
 class DriverStatusFragment : Fragment() {
 
@@ -39,13 +45,18 @@ class DriverStatusFragment : Fragment() {
     }
 
     private fun observeViewModel() {
+        // Pending count — requests list only has status='requested' bookings, correct source
         viewModel.requests.observe(viewLifecycleOwner) { state ->
             if (state is Resource.Success) {
-                val list = state.data
-                val pending   = list.count { it.status == "requested" }
-                val completed = list.count { it.status == "completed" }
-                binding.tvPendingCount.text  = pending.toString()
-                binding.tvAcceptedCount.text = completed.toString()
+                binding.tvPendingCount.text = state.data.count { it.status == "requested" }.toString()
+            }
+        }
+
+        // Completed count — must come from driverBookings (GET /bookings, all statuses)
+        // requests list NEVER contains completed bookings → always 0 if read from there
+        viewModel.driverBookings.observe(viewLifecycleOwner) { state ->
+            if (state is Resource.Success) {
+                binding.tvAcceptedCount.text = state.data.count { it.status == "completed" }.toString()
             }
         }
     }
@@ -55,4 +66,6 @@ class DriverStatusFragment : Fragment() {
         _binding = null
     }
 }
+
+
 

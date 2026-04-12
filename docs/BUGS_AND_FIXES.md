@@ -412,5 +412,21 @@ _Add new entries above this line as issues are discovered._
 
 ---
 
+### [BUG-015] Status tab "Rides Completed" count always showed 0
+
+- **Date:** 2026-04-12
+- **Phase:** Phase 6 — Driver BottomNav Shell
+- **File(s) affected:** `DriverStatusFragment.kt`, `DriverDashboardFragment.kt`
+- **Description:** The **Status** tab (`DriverStatusFragment`) always displayed `0` for "Rides Completed" even after a driver completed multiple rides. The **Dashboard** tab showed the correct count after the BUG-014 fix. The two tabs were inconsistent.
+- **Root cause:** `DriverStatusFragment.observeViewModel()` counted completed bookings from `viewModel.requests`, which is backed by `GET /driver/requests`. That endpoint only ever returns bookings with `status = 'requested'` (unassigned, pending). Completed bookings are never in that list, so the filter `list.count { it.status == "completed" }` always returned `0`. Identical to the same mistake originally in `DriverDashboardFragment` before BUG-014 was fixed.
+- **Fix applied:**
+  1. **`DriverStatusFragment`** — split the observer into two:
+     - `viewModel.requests` → `tvPendingCount` (pending count — correct source ✓)
+     - `viewModel.driverBookings` → `tvAcceptedCount` (completed count — now uses `GET /bookings` role-filtered, which includes all statuses)
+  2. **`DriverDashboardFragment`** — also had the same `driverBookings.observe` called twice (once for the active banner, once for completed count). Merged into a single observer that handles the banner, pending count, and completed count together — eliminating the double-registration.
+- **Prevention tip:** Any count or display that involves a status *other than `requested`* must use `viewModel.driverBookings` (backed by `GET /bookings`). Only `viewModel.requests` (`GET /driver/requests`) should be used for pending/requested counts. Add a comment at the top of every observer block stating which endpoint backs it.
+
+---
+
 _Last updated: 2026-04-12_
 _Add new entries above this line as issues are discovered._

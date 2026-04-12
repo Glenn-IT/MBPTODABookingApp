@@ -55,26 +55,21 @@ class DriverDashboardFragment : Fragment() {
     }
 
     private fun observeViewModel() {
-        // ── Active ride banner ────────────────────────────────────────────
-        viewModel.driverBookings.observe(viewLifecycleOwner) { state ->
+        // Pending count — GET /driver/requests only has status='requested' bookings ✓
+        viewModel.requests.observe(viewLifecycleOwner) { state ->
             if (state is Resource.Success) {
-                val active = state.data.firstOrNull { it.status == "accepted" || it.status == "in_progress" }
-                bindActiveRideBanner(active)
+                binding.tvDashPendingCount.text = state.data.count { it.status == "requested" }.toString()
             }
         }
 
-        // ── Counts (pending / completed) ──────────────────────────────────
-        viewModel.requests.observe(viewLifecycleOwner) { state ->
-            if (state is Resource.Success) {
-                val list      = state.data
-                val pending   = list.count { it.status == "requested" }
-                // For completed use driverBookings; requests list only has "requested" items
-                binding.tvDashPendingCount.text = pending.toString()
-            }
-        }
+        // Active banner + completed count — GET /bookings (role-filtered, all statuses)
+        // IMPORTANT: do NOT read completed count from viewModel.requests — it never has them
         viewModel.driverBookings.observe(viewLifecycleOwner) { state ->
             if (state is Resource.Success) {
-                val completed = state.data.count { it.status == "completed" }
+                val list = state.data
+                val active    = list.firstOrNull { it.status == "accepted" || it.status == "in_progress" }
+                val completed = list.count { it.status == "completed" }
+                bindActiveRideBanner(active)
                 binding.tvDashCompletedCount.text = completed.toString()
             }
         }

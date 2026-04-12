@@ -305,10 +305,14 @@ When a driver accepts a ride and later closes the app or navigates away:
 - [x] Update `ActiveRideActivity.kt` (booking ID, status badge, back arrow, proper strings)
 - [x] `gradlew assembleDebug` → **BUILD SUCCESSFUL** ✅
 - [x] Logged in `docs/BUGS_AND_FIXES.md` as BUG-014
-- [ ] Test: Dashboard tab shows welcome + counts
+- [x] Fix Status tab completed count always 0 (BUG-015) — `DriverStatusFragment` now observes `driverBookings` for completed count
+- [x] Fix Dashboard duplicate `driverBookings` observer — merged into single clean observer
+- [x] Logged in `docs/BUGS_AND_FIXES.md` as BUG-015
+- [ ] Test: Dashboard tab shows welcome + correct pending + completed counts
+- [ ] Test: **Status tab shows correct completed count** (matches Dashboard)
 - [ ] Test: Accept a ride → close app → login again → Active Ride banner appears on Dashboard
 - [ ] Test: Tap Resume Ride → ActiveRideActivity opens with correct booking data
-- [ ] Test: Complete ride → return to Dashboard → banner disappears
+- [ ] Test: Complete ride → return to Dashboard → banner disappears, completed count increments
 - [ ] Test: Ride requests load correctly in Requests tab
 - [ ] Test: Map still updates driver location
 - [ ] Manual test on device ✅
@@ -442,5 +446,5 @@ toolbar style, input field style.
 
 ---
 
-_Last updated: 2026-04-12 — Phase 6 complete + BUG-014 Active Ride fix_
+_Last updated: 2026-04-12 — Phase 6 complete + BUG-014 Active Ride fix + BUG-015 Status tab completed count fix_
 
