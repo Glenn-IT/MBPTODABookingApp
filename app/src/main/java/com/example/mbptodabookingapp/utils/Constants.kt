@@ -12,11 +12,11 @@ object Constants {
     // Android Emulator → PHP built-in dev server (php -S localhost:8001)
     const val BASE_URL_DEV_SRV  = "http://10.0.2.2:8001/"
 
-    // Physical device on same Wi-Fi → XAMPP Apache (PC IP: 192.168.0.100)
-    const val BASE_URL_DEVICE   = "http://192.168.0.100/ptoda_booking_api/"
+    // Physical device on same Wi-Fi → XAMPP Apache (PC IP: 192.168.0.101)
+    const val BASE_URL_DEVICE   = "http://192.168.0.101/ptoda_booking_api/"
 
     // Physical device on same Wi-Fi → PHP built-in dev server
-    const val BASE_URL_DEVICE_DEV = "http://192.168.0.100:8001/"
+    const val BASE_URL_DEVICE_DEV = "http://192.168.0.101:8001/"
 
     // Active base URL used by ApiClient — change this line to switch environments
     const val BASE_URL = BASE_URL_DEVICE
