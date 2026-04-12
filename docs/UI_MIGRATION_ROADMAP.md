@@ -19,7 +19,7 @@
 | Phase 3 | Register Screen Polish | ✅ Done | 2026-04-12 |
 | Phase 4 | Booking Screen Card UI | ✅ Done | 2026-04-12 |
 | Phase 5 | Passenger BottomNav Shell | ✅ Done | 2026-04-12 |
-| Phase 6 | Driver BottomNav Shell | ⬜ Pending | — |
+| Phase 6 | Driver BottomNav Shell | ✅ Done | 2026-04-12 |
 | Phase 7 | Admin Tabs + ViewPager2 | ⬜ Pending | — |
 | Phase 8 | List Item Card Redesign | ⬜ Pending | — |
 | Phase 9 | Global Theme Consistency | ⬜ Pending | — |
@@ -254,34 +254,64 @@ Introduce a `BottomNavigationView` to the passenger home screen with tabs:
 
 ## 🏍️ Phase 6 — Driver BottomNav Shell
 
-**Status:** ⬜ Pending
+**Status:** ✅ Complete — 2026-04-12
 **Risk:** 🟡 Medium
-**Files to create:**
+**Files created:**
 - `app/src/main/res/menu/menu_driver.xml`
+- `app/src/main/res/layout/fragment_driver_dashboard.xml`
+- `app/src/main/res/layout/fragment_driver_requests.xml`
+- `app/src/main/res/drawable/shape_online_dot.xml`
+- `app/src/main/res/drawable/shape_status_badge.xml`
 - `app/src/main/java/.../ui/driver/DriverDashboardFragment.kt`
 - `app/src/main/java/.../ui/driver/DriverRequestsFragment.kt`
-**Files to edit:**
+**Files edited:**
 - `app/src/main/res/layout/activity_driver_home.xml`
+- `app/src/main/res/layout/activity_active_ride.xml` ← redesigned (uniform card style)
 - `DriverHomeActivity.kt`
+- `DriverViewModel.kt` ← added `driverBookings` LiveData + `fetchDriverBookings()`
+- `ActiveRideActivity.kt` ← added back navigation, booking ID display, status badge
+- `strings.xml` ← added `driver_welcome`, `active_ride_banner_title`, `active_ride_resume`, etc.
 
 ### Goal:
 Introduce `BottomNavigationView` to the driver screen with tabs:
 `Dashboard` | `Ride Requests` | `Status`
 
 ### Architecture approach:
-- Move `rvRequests` RecyclerView + `btnRefresh` into `DriverRequestsFragment`
-- Map stays in the activity layer
-- Dashboard tab shows a status card (online/offline toggle)
+- Map always visible as the background layer (mirrors passenger home)
+- All three tabs show a Fragment overlay in `fragmentContainer`
+- `DriverDashboardFragment` — welcome card + live stats + **Active Ride Banner**
+- `DriverRequestsFragment` — RecyclerView + Refresh button (moved from activity)
+- `DriverStatusFragment` — online status card + tips (pre-existing)
+
+### Active Ride Banner (BUG-014 fix)
+When a driver accepts a ride and later closes the app or navigates away:
+- `GET /driver/requests` only returns `status = 'requested'` bookings — the accepted ride is invisible there
+- `DriverDashboardFragment` now also calls `GET /bookings` (role-filtered) which includes `accepted` / `in_progress` bookings
+- If an active booking is found, a purple banner card appears at the top of the Dashboard showing:
+  - Booking ID + Status badge
+  - Pickup and dropoff addresses
+  - **Resume Ride** button → opens `ActiveRideActivity`
+- Once the ride is completed, the banner disappears on next resume
 
 ### Checklist:
-- [ ] Create `menu_driver.xml` with 3 items
-- [ ] Create `DriverDashboardFragment` (status card)
-- [ ] Create `DriverRequestsFragment` (moves existing RecyclerView + logic)
-- [ ] Update `DriverHomeActivity` to use BottomNav
-- [ ] Test: Ride requests load correctly in new fragment
-- [ ] Test: Accept / Reject actions still work
+- [x] Create `menu_driver.xml` with 3 items
+- [x] Create `DriverDashboardFragment` (welcome + stats card + Active Ride banner)
+- [x] Create `DriverRequestsFragment` (moves existing RecyclerView + logic)
+- [x] Update `activity_driver_home.xml` — map always visible, single fragmentContainer
+- [x] Update `DriverHomeActivity` to use fragment-based BottomNav
+- [x] Add `fetchDriverBookings()` + `driverBookings` LiveData to `DriverViewModel`
+- [x] Add Active Ride banner to `fragment_driver_dashboard.xml`
+- [x] Redesign `activity_active_ride.xml` (uniform card style, back navigation)
+- [x] Update `ActiveRideActivity.kt` (booking ID, status badge, back arrow, proper strings)
+- [x] `gradlew assembleDebug` → **BUILD SUCCESSFUL** ✅
+- [x] Logged in `docs/BUGS_AND_FIXES.md` as BUG-014
+- [ ] Test: Dashboard tab shows welcome + counts
+- [ ] Test: Accept a ride → close app → login again → Active Ride banner appears on Dashboard
+- [ ] Test: Tap Resume Ride → ActiveRideActivity opens with correct booking data
+- [ ] Test: Complete ride → return to Dashboard → banner disappears
+- [ ] Test: Ride requests load correctly in Requests tab
 - [ ] Test: Map still updates driver location
-- [ ] Build passes + manual test ✅
+- [ ] Manual test on device ✅
 
 ---
 
@@ -412,5 +442,5 @@ toolbar style, input field style.
 
 ---
 
-_Last updated: 2026-04-12 — Phase 5 complete_
+_Last updated: 2026-04-12 — Phase 6 complete + BUG-014 Active Ride fix_
 

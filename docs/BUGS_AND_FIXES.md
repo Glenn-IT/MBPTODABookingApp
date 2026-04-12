@@ -394,5 +394,23 @@ _Add new entries above this line as issues are discovered._
 
 ---
 
-_Last updated: 2026-03-17_
+### [BUG-014] Driver had no way to find an accepted booking after closing the app
+
+- **Date:** 2026-04-12
+- **Phase:** Phase 6 — Driver BottomNav Shell
+- **File(s) affected:** `DriverDashboardFragment.kt`, `fragment_driver_dashboard.xml`, `DriverViewModel.kt`, `activity_active_ride.xml`, `ActiveRideActivity.kt`
+- **Description:** Once a driver accepted a ride and the status changed to `"accepted"`, the booking disappeared from `GET /driver/requests` (which only returns `status = 'requested'` unassigned bookings). If the driver closed the app or pressed Back from `ActiveRideActivity`, there was no visible entry point on the dashboard or requests tab to resume managing the active ride. The passenger's status screen correctly showed "accepted" but the driver was effectively locked out.
+- **Root cause:** `DriverDashboardFragment` only observed `viewModel.requests` (pending list), which excludes `accepted` / `in_progress` bookings. No "Active Ride" banner existed. `ActiveRideActivity` also had no back button.
+- **Fix applied:**
+  1. Added `fetchDriverBookings()` to `DriverViewModel` — calls `GET /bookings` (role-filtered), which returns all bookings assigned to the driver regardless of status.
+  2. Added `driverBookings: LiveData` to `DriverViewModel`.
+  3. Updated `DriverDashboardFragment` to observe `driverBookings`, detect any booking with `status = "accepted"` or `"in_progress"`, and show a prominent **Active Ride Banner** card at the top of the dashboard.
+  4. The banner displays Booking ID, pickup address, dropoff address, and a status badge. Tapping **Resume Ride** launches `ActiveRideActivity` with the correct `booking_id`.
+  5. `DriverHomeActivity` now calls `fetchDriverBookings()` in both `onCreate` and `onResume` so the banner is always current.
+  6. `ActiveRideActivity` layout redesigned to be uniform with Phase 2–6 card style (Booking ID row, labeled pickup/dropoff, status badge, back-arrow navigation).
+- **Prevention tip:** When an entity transitions to a new status and disappears from a role-filtered list, always ensure the next status is surfaced via a separate API call or a dedicated LiveData + UI element. Never leave a user with "accepted" data and no path forward.
+
+---
+
+_Last updated: 2026-04-12_
 _Add new entries above this line as issues are discovered._

@@ -1,18 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    Active Ride Activity — driver manages an accepted/in-progress booking.
+    Map + pickup marker on top, booking details card at bottom.
+    Redesigned to be uniform with Phase 2–6 card style.
+    Phase 6 Active-Ride fix — UI Migration Roadmap
+-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
+    <!-- ── Toolbar ─────────────────────────────────────────────────────── -->
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="@color/colorPrimary"
+        android:background="@color/statusInProgress"
+        app:navigationIcon="@drawable/ic_back"
         app:title="@string/active_ride"
         app:titleTextColor="@color/white" />
 
+    <!-- ── Map ─────────────────────────────────────────────────────────── -->
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/map"
         android:name="com.google.android.gms.maps.SupportMapFragment"
@@ -20,6 +29,7 @@
         android:layout_height="0dp"
         android:layout_weight="1" />
 
+    <!-- ── Ride Details Card ───────────────────────────────────────────── -->
     <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -33,27 +43,110 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-            <TextView
-                android:id="@+id/tvPassengerPickup"
-                android:layout_width="wrap_content"
+            <!-- Booking ID + Status row -->
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textStyle="bold"
-                android:layout_marginBottom="4dp"
-                android:text="Pickup: —" />
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:layout_marginBottom="12dp">
 
-            <TextView
-                android:id="@+id/tvPassengerDropoff"
-                android:layout_width="wrap_content"
+                <TextView
+                    android:id="@+id/tvBookingId"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/active_ride"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvStatus"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/shape_status_badge"
+                    android:paddingStart="10dp"
+                    android:paddingTop="4dp"
+                    android:paddingEnd="10dp"
+                    android:paddingBottom="4dp"
+                    android:text="@string/active_ride_status_accepted"
+                    android:textColor="@color/statusInProgress"
+                    android:textSize="11sp"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+            <!-- Divider -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginBottom="12dp"
+                android:background="@color/lightGrey" />
+
+            <!-- Pickup row -->
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                android:text="Dropoff: —" />
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:layout_marginBottom="8dp">
 
+                <TextView
+                    android:layout_width="72dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/label_pickup_colon"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvPassengerPickup"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="—"
+                    android:textColor="@color/black"
+                    android:textSize="13sp" />
+
+            </LinearLayout>
+
+            <!-- Dropoff row -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:layout_marginBottom="16dp">
+
+                <TextView
+                    android:layout_width="72dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/label_dropoff_colon"
+                    android:textColor="@color/statusCompleted"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvPassengerDropoff"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="—"
+                    android:textColor="@color/black"
+                    android:textSize="13sp" />
+
+            </LinearLayout>
+
+            <!-- Complete button -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnCompleteRide"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/complete_ride"
-                android:backgroundTint="@color/statusCompleted" />
+                android:paddingTop="12dp"
+                android:paddingBottom="12dp"
+                android:backgroundTint="@color/statusCompleted"
+                android:text="@string/complete_ride" />
 
             <ProgressBar
                 android:id="@+id/progressBar"
@@ -62,8 +155,11 @@
                 android:layout_gravity="center"
                 android:layout_marginTop="8dp"
                 android:visibility="gone" />
+
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 
 </LinearLayout>
+
+
 

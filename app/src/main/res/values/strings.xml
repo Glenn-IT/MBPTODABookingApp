@@ -38,6 +38,15 @@
     <string name="history_empty_title">No rides yet</string>
     <string name="history_empty_body">Your completed rides will appear here.</string>
     <string name="arrow_down">↓</string>
+    <!-- Driver status fragment -->
+    <string name="driver_status_icon">🏍️</string>
+    <string name="driver_online_title">You\'re Online</string>
+    <string name="driver_online_body">You are visible to passengers.\nCheck the Requests tab for new bookings.</string>
+    <string name="pending_requests">Pending Requests</string>
+    <string name="completed_rides">Rides Completed</string>
+    <string name="driver_tips_title">💡 Quick Tips</string>
+    <string name="driver_tips_body">• Tap the Requests tab to see new ride requests.\n• Tap a request to Accept or Reject it.\n• Map tab shows your current location.\n• Keep the app open to receive notifications.</string>
+    <string name="refresh">Refresh</string>
     <!-- Passenger -->
     <string name="passenger_home">Passenger Home</string>
     <string name="book_ride">Book a Ride</string>
@@ -68,7 +77,19 @@
     <string name="map_tap_hint_pickup">Tap the map to place your pickup marker</string>
     <string name="map_tap_hint_dropoff">Tap the map to place your dropoff marker</string>
     <!-- Driver -->
+    <string name="driver_welcome">Hello, %s 👋</string>
     <string name="driver_home">Driver Home</string>
+    <string name="active_ride_banner_title">🚗 Active Ride In Progress</string>
+    <string name="active_ride_banner_hint">Tap to open and manage your active ride.</string>
+    <string name="active_ride_resume">Resume Ride</string>
+    <string name="active_ride_no_active">No active ride right now.</string>
+    <string name="label_booking_id">Booking #%d</string>
+    <string name="label_pickup_colon">📍 Pickup</string>
+    <string name="label_dropoff_colon">🏁 Dropoff</string>
+    <string name="label_status">Status</string>
+    <string name="active_ride_complete_success">✅ Ride completed successfully!</string>
+    <string name="active_ride_status_accepted">Accepted — Heading to Pickup</string>
+    <string name="active_ride_status_in_progress">In Progress</string>
     <string name="ride_requests">Ride Requests</string>
     <string name="ride_request_detail">Ride Request</string>
     <string name="active_ride">Active Ride</string>

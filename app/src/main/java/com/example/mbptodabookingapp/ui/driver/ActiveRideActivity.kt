@@ -17,7 +17,16 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 
-/** Shows the active ride on map and lets the driver mark it as complete. */
+/**
+ * Shows the accepted/active ride on a map so the driver can navigate to the
+ * passenger and then mark the ride as complete.
+ *
+ * Reachable from:
+ *  - RideRequestActivity after accepting (direct Intent)
+ *  - DriverDashboardFragment → "Resume Ride" button on the Active Ride banner
+ *
+ * Phase 6 Active-Ride fix — UI Migration Roadmap
+ */
 class ActiveRideActivity : AppCompatActivity(), OnMapReadyCallback {
 
     companion object {
@@ -35,6 +44,7 @@ class ActiveRideActivity : AppCompatActivity(), OnMapReadyCallback {
         setContentView(binding.root)
 
         setSupportActionBar(binding.toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         bookingId = intent.getIntExtra(EXTRA_BOOKING_ID, -1)
         viewModel = ViewModelProvider(this)[DriverViewModel::class.java]
@@ -51,20 +61,38 @@ class ActiveRideActivity : AppCompatActivity(), OnMapReadyCallback {
         observeViewModel()
     }
 
+    override fun onSupportNavigateUp(): Boolean {
+        onBackPressedDispatcher.onBackPressed()
+        return true
+    }
+
     override fun onMapReady(map: GoogleMap) { googleMap = map }
 
     private fun observeViewModel() {
         viewModel.booking.observe(this) { state ->
             if (state is Resource.Success) {
                 val b = state.data ?: return@observe
-                binding.tvPassengerPickup.text  = "Pickup: ${b.pickup_address}"
-                binding.tvPassengerDropoff.text = "Dropoff: ${b.dropoff_address}"
+
+                // Booking ID + status badge
+                binding.tvBookingId.text = getString(R.string.label_booking_id, b.id)
+                binding.tvStatus.text = when (b.status) {
+                    "in_progress" -> getString(R.string.active_ride_status_in_progress)
+                    else          -> getString(R.string.active_ride_status_accepted)
+                }
+
+                // Addresses
+                binding.tvPassengerPickup.text  = b.pickup_address
+                binding.tvPassengerDropoff.text = b.dropoff_address
+
+                // Map markers
                 try {
                     val pickup  = LatLng(b.pickup_lat.toDouble(),  b.pickup_lng.toDouble())
                     val dropoff = LatLng(b.dropoff_lat.toDouble(), b.dropoff_lng.toDouble())
                     googleMap?.addMarker(MarkerOptions().position(pickup).title("Pickup"))
-                    googleMap?.addMarker(MarkerOptions().position(dropoff).title("Dropoff")
-                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)))
+                    googleMap?.addMarker(
+                        MarkerOptions().position(dropoff).title("Dropoff")
+                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))
+                    )
                     googleMap?.animateCamera(CameraUpdateFactory.newLatLngZoom(pickup, 14f))
                 } catch (_: Exception) { }
             }
@@ -73,24 +101,27 @@ class ActiveRideActivity : AppCompatActivity(), OnMapReadyCallback {
         viewModel.actionState.observe(this) { state ->
             when (state) {
                 is Resource.Loading -> {
-                    binding.progressBar.visibility     = View.VISIBLE
-                    binding.btnCompleteRide.isEnabled  = false
+                    binding.progressBar.visibility    = View.VISIBLE
+                    binding.btnCompleteRide.isEnabled = false
                 }
                 is Resource.Success -> {
-                    binding.progressBar.visibility     = View.GONE
-                    Toast.makeText(this, "Ride completed!", Toast.LENGTH_SHORT).show()
+                    binding.progressBar.visibility    = View.GONE
+                    Toast.makeText(this, getString(R.string.active_ride_complete_success), Toast.LENGTH_SHORT).show()
+                    // Refresh driver bookings so the banner disappears on Dashboard
                     startActivity(Intent(this, DriverHomeActivity::class.java).apply {
                         flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
                     })
                     finish()
                 }
                 is Resource.Error -> {
-                    binding.progressBar.visibility     = View.GONE
-                    binding.btnCompleteRide.isEnabled  = true
+                    binding.progressBar.visibility    = View.GONE
+                    binding.btnCompleteRide.isEnabled = true
                     Toast.makeText(this, state.message, Toast.LENGTH_LONG).show()
                 }
             }
         }
     }
 }
+
+
 

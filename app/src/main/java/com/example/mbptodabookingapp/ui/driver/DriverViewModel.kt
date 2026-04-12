@@ -21,6 +21,14 @@ class DriverViewModel(application: Application) : AndroidViewModel(application) 
     private val _requests = MutableLiveData<Resource<List<Booking>>>()
     val requests: LiveData<Resource<List<Booking>>> = _requests
 
+    /**
+     * All bookings assigned to this driver (accepted, in_progress, completed).
+     * Populated by fetchDriverBookings() → GET /bookings (role-filtered).
+     * Used by DriverDashboardFragment to surface the "Active Ride" banner.
+     */
+    private val _driverBookings = MutableLiveData<Resource<List<Booking>>>()
+    val driverBookings: LiveData<Resource<List<Booking>>> = _driverBookings
+
     private val _booking = MutableLiveData<Resource<Booking>>()
     val booking: LiveData<Resource<Booking>> = _booking
 
@@ -29,6 +37,14 @@ class DriverViewModel(application: Application) : AndroidViewModel(application) 
 
     fun fetchRequests() {
         viewModelScope.launch { _requests.value = bookingRepo.getDriverRequests() }
+    }
+
+    /**
+     * Fetches ALL bookings assigned to this driver (role-filtered by the API).
+     * Called on every DriverHomeActivity resume so the dashboard stays current.
+     */
+    fun fetchDriverBookings() {
+        viewModelScope.launch { _driverBookings.value = bookingRepo.getBookings() }
     }
 
     fun fetchBooking(id: Int) {
