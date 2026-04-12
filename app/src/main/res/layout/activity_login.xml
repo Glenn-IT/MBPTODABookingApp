@@ -9,13 +9,13 @@
     android:padding="32dp">
 
     <!-- ── Branding header (prototype style) ────────────────────────── -->
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <!-- App logo — same shape as launcher icon, filled with colorPrimary -->
+    <ImageView
+        android:layout_width="80dp"
+        android:layout_height="80dp"
         android:layout_marginBottom="8dp"
-        android:gravity="center"
-        android:text="@string/app_logo_emoji"
-        android:textSize="52sp" />
+        android:contentDescription="@string/app_name"
+        android:src="@drawable/ic_app_logo" />
 
     <TextView
         android:layout_width="wrap_content"

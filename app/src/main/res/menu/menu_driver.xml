@@ -1,20 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <!-- ic_driver_dashboard = motorcycle icon (transport themed) -->
     <item
         android:id="@+id/nav_map"
-        android:icon="@drawable/ic_dashboard"
+        android:icon="@drawable/ic_driver_dashboard"
         android:title="@string/tab_dashboard" />
 
+    <!-- ic_requests = booking receipt icon -->
     <item
         android:id="@+id/nav_requests"
         android:icon="@drawable/ic_requests"
         android:title="@string/tab_requests" />
 
+    <!-- ic_status = check-circle icon -->
     <item
         android:id="@+id/nav_status"
         android:icon="@drawable/ic_status"
         android:title="@string/tab_status" />
 
 </menu>
+
+
 
