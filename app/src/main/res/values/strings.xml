@@ -21,6 +21,23 @@
     <string name="section_personal_info">PERSONAL INFO</string>
     <string name="section_choose_role">CHOOSE ROLE</string>
     <string name="section_driver_details">DRIVER DETAILS</string>
+    <string name="section_pickup">📍 PICKUP</string>
+    <string name="section_dropoff">📍 DROPOFF</string>
+    <string name="estimated_fare_label">🧾 Estimated Fare</string>
+    <string name="estimated_fare_placeholder">Calculating…</string>
+    <!-- Map placeholder (shown while Google Maps API is not activated) -->
+    <string name="map_placeholder_icon">🗺️</string>
+    <string name="map_placeholder_title">Map Preview Unavailable</string>
+    <string name="map_placeholder_body">Google Maps API key is not yet activated.\nUse sample data below to test the booking flow.</string>
+    <string name="map_api_notice">⚠️ Google Maps API not yet activated — tap Set Pickup/Dropoff will not respond. Use sample data instead.</string>
+    <!-- Sample data card -->
+    <string name="sample_data_title">📋 Test Without Map</string>
+    <string name="sample_data_body">Load sample pickup and dropoff locations to test the full booking flow without Google Maps.</string>
+    <string name="sample_data_btn">Load Sample Data</string>
+    <!-- Ride history empty state -->
+    <string name="history_empty_title">No rides yet</string>
+    <string name="history_empty_body">Your completed rides will appear here.</string>
+    <string name="arrow_down">↓</string>
     <!-- Passenger -->
     <string name="passenger_home">Passenger Home</string>
     <string name="book_ride">Book a Ride</string>

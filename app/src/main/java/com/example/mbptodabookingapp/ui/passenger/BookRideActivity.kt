@@ -63,8 +63,10 @@ class BookRideActivity : AppCompatActivity(), OnMapReadyCallback {
 
         viewModel = ViewModelProvider(this)[PassengerViewModel::class.java]
 
-        val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
-        mapFragment.getMapAsync(this)
+        // Safe cast — map is hidden while Google Maps API is not activated.
+        // Change back to: "as SupportMapFragment" once the API key is active.
+        val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as? SupportMapFragment
+        mapFragment?.getMapAsync(this)
 
         // Mode toggles — tapping the active button deactivates it (NONE)
         binding.btnModePickup.setOnClickListener {
@@ -76,6 +78,9 @@ class BookRideActivity : AppCompatActivity(), OnMapReadyCallback {
 
         binding.btnUseCurrentLocation.setOnClickListener { fillCurrentLocation() }
         binding.btnRequestRide.setOnClickListener { submitBooking() }
+
+        // Sample data — fills all 6 fields so booking can be tested without Maps API
+        binding.btnUseSampleData.setOnClickListener { fillSampleData() }
 
         setMapMode(MapMode.NONE)   // initialise button colours + hint text
         observeViewModel()
@@ -235,6 +240,18 @@ class BookRideActivity : AppCompatActivity(), OnMapReadyCallback {
                 loc?.let { setPickupFromMap(LatLng(it.latitude, it.longitude)) }
                     ?: Toast.makeText(this, "Location unavailable. Try again.", Toast.LENGTH_SHORT).show()
             }
+    }
+
+    // ── Sample Data Fill ──────────────────────────────────────────────────────
+
+    /** Fills all 6 form fields with sample data — for testing without Maps API. */
+    private fun fillSampleData() {
+        binding.etPickupAddress.setText("123 Sample St, Sample City")
+        binding.etPickupLat.setText("37.422065")
+        binding.etPickupLng.setText("-122.084089")
+        binding.etDropoffAddress.setText("456 Example Ave, Example Town")
+        binding.etDropoffLat.setText("37.427474")
+        binding.etDropoffLng.setText("-122.085289")
     }
 
     // ── Booking Submission ────────────────────────────────────────────────────

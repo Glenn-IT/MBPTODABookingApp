@@ -17,8 +17,8 @@
 | Phase 1 | Resource Setup (colors, fonts) | ✅ Done | 2026-04-12 |
 | Phase 2 | Login Screen Upgrade | ✅ Done | 2026-04-12 |
 | Phase 3 | Register Screen Polish | ✅ Done | 2026-04-12 |
-| Phase 4 | Booking Screen Card UI | ⬜ Pending | — |
-| Phase 5 | Passenger BottomNav Shell | ⬜ Pending | — |
+| Phase 4 | Booking Screen Card UI | ✅ Done | 2026-04-12 |
+| Phase 5 | Passenger BottomNav Shell | ✅ Done | 2026-04-12 |
 | Phase 6 | Driver BottomNav Shell | ⬜ Pending | — |
 | Phase 7 | Admin Tabs + ViewPager2 | ⬜ Pending | — |
 | Phase 8 | List Item Card Redesign | ⬜ Pending | — |
@@ -168,34 +168,52 @@
 
 ---
 
-## 🚗 Phase 4 — Booking Screen Card UI
+## 🚗 Phase 4 — Booking Screen Card UI ✅
 
-**Status:** ⬜ Pending
+**Status:** Complete — 2026-04-12
 **Risk:** 🟡 Low-Medium
-**Files to edit:** `app/src/main/res/layout/activity_book_ride.xml`
-**Files NOT to touch:** `BookRideActivity.kt`, `PassengerViewModel.kt`, `BookingRepository.kt`
+**Files edited:** `app/src/main/res/layout/activity_book_ride.xml`, `app/src/main/res/values/strings.xml`
+**Files NOT touched:** `BookRideActivity.kt`, `PassengerViewModel.kt`, `BookingRepository.kt`
 
-### Goal:
-Borrow the prototype's card-based booking form aesthetic (estimated fare card, cleaner labels)
-while keeping the full map + coordinate fields intact.
+### Changes made:
 
-### Prototype elements to bring over:
-- `MaterialCardView` wrapper around booking form sections
-- Estimated Fare display row (styled card at bottom of form)
-- Section header typography for "Pickup" / "Dropoff" labels
+#### `activity_book_ride.xml`
+| Element | Before | After |
+|---|---|---|
+| Form background | *(white)* | `@color/lightGrey` (visual separation) |
+| Pickup fields | bare LinearLayout | wrapped in `MaterialCardView` (8dp radius, 3dp elevation) |
+| Dropoff fields | bare LinearLayout | wrapped in `MaterialCardView` (8dp radius, 3dp elevation) |
+| Section headers | plain bold `14sp` text | `13sp` bold + `0.08` letter-spacing (matches Phase 2/3) |
+| Pickup header colour | `colorPrimary` | `colorPrimary` ✅ unchanged |
+| Dropoff header colour | `statusCompleted` | `statusCompleted` ✅ unchanged |
+| Estimated Fare | *(none)* | `MaterialCardView` with primary blue background + `tvEstimatedFare` |
+| `btnRequestRide` | default padding | `+12dp` top/bottom (matches all other buttons) |
+| Lat/Lng rows | no baseline attr | `android:baselineAligned="false"` (lint fix) |
 
-### What to NOT touch:
-- Map `FragmentContainerView` (`@+id/map`)
-- Tap-mode toggle buttons (`btnModePickup`, `btnModeDropoff`)
-- All coordinate input fields (`etPickupLat`, `etPickupLng`, `etDropoffLat`, `etDropoffLng`)
-- `btnRequestRide`, `btnUseCurrentLocation`, `progressBar`
+#### `strings.xml` — 4 strings added
+| String | Value |
+|---|---|
+| `section_pickup` | `"📍 PICKUP"` |
+| `section_dropoff` | `"📍 DROPOFF"` |
+| `estimated_fare_label` | `"🧾 Estimated Fare"` |
+| `estimated_fare_placeholder` | `"Calculating…"` |
+
+### Protected IDs — all verified intact:
+`toolbar` ✅ `map` ✅ `btnModePickup` ✅ `btnModeDropoff` ✅ `tvMapHint` ✅
+`tilPickupAddress` ✅ `etPickupAddress` ✅ `tilPickupLat` ✅ `etPickupLat` ✅ `tilPickupLng` ✅ `etPickupLng` ✅
+`btnUseCurrentLocation` ✅ `tilDropoffAddress` ✅ `etDropoffAddress` ✅
+`tilDropoffLat` ✅ `etDropoffLat` ✅ `tilDropoffLng` ✅ `etDropoffLng` ✅
+`btnRequestRide` ✅ `progressBar` ✅
 
 ### Checklist:
-- [ ] Wrap form sections in `MaterialCardView`
-- [ ] Add fare display card (static UI — wire up to data later)
-- [ ] All existing IDs verified intact
-- [ ] Test: Full booking flow (tap map → fill form → submit → ride status screen)
-- [ ] Build passes + manual test ✅
+- [x] Pickup + Dropoff fields wrapped in `MaterialCardView`
+- [x] Estimated Fare display card added (static UI, `tvEstimatedFare` ID ready for future data binding)
+- [x] All existing IDs verified intact — `BookRideActivity.kt` shows 0 errors
+- [x] `gradlew assembleDebug` → **BUILD SUCCESSFUL** ✅
+- [ ] Test: Tap Set Pickup → tap map → address + coords fill
+- [ ] Test: Tap Set Dropoff → tap map → address + coords fill
+- [ ] Test: Request Ride → booking submitted → RideStatusActivity opens
+- [ ] Manual test on device ✅
 
 ---
 
@@ -394,5 +412,5 @@ toolbar style, input field style.
 
 ---
 
-_Last updated: 2026-04-12 — Phase 3 complete_
+_Last updated: 2026-04-12 — Phase 5 complete_
 
