@@ -11,6 +11,9 @@
 docs/
 ├── INDEX.md                        ← You are here — master navigation
 │
+├── FEASIBILITY_REPORT.md           ← UI migration feasibility analysis (2026-04-12)
+├── UI_MIGRATION_ROADMAP.md         ← Step-by-step UI upgrade plan (Phases 0–10)
+│
 ├── api/
 │   ├── AUTH.md                     ← /auth/register, /auth/login
 │   ├── BOOKINGS.md                 ← /bookings (passenger & driver)
@@ -117,6 +120,15 @@ Tokens are obtained from `POST /auth/login`. Roles encoded in the JWT payload:
 
 ---
 
+## 🖌️ UI/UX Migration (Active — April 2026)
+
+| File | Purpose |
+| ---------------------------- | ----------------------------------------------------------------- |
+| `FEASIBILITY_REPORT.md` | Full analysis of `PTODA_Prototype` vs `MBPTODABookingApp` — risks, screen mapping, critical IDs |
+| `UI_MIGRATION_ROADMAP.md` | Step-by-step execution plan (Phases 0–10) with checklists and test matrices |
+
+---
+
 ## 📚 Legacy Guide Files (kept for reference)
 
 | File                         | Purpose                                     |
@@ -129,4 +141,4 @@ Tokens are obtained from `POST /auth/login`. Roles encoded in the JWT payload:
 
 ---
 
-_Last updated: 2026-03-18_
+_Last updated: 2026-04-12_
