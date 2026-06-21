@@ -4,8 +4,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import com.example.mbptodabookingapp.R
 import com.example.mbptodabookingapp.databinding.FragmentDriverStatusBinding
 import com.example.mbptodabookingapp.utils.Resource
 
@@ -41,7 +44,33 @@ class DriverStatusFragment : Fragment() {
         // Share ViewModel with parent activity — no extra API calls
         viewModel = ViewModelProvider(requireActivity())[DriverViewModel::class.java]
 
+        setupOnlineToggle()
         observeViewModel()
+    }
+
+    private fun setupOnlineToggle() {
+        // Avoid triggering the listener during initial setup
+        binding.switchOnline.setOnCheckedChangeListener(null)
+        binding.switchOnline.isChecked = true
+        applyOnlineState(true)
+
+        binding.switchOnline.setOnCheckedChangeListener { _, isChecked ->
+            applyOnlineState(isChecked)
+            viewModel.updateDriverStatus(isChecked)
+            val msg = if (isChecked) "You are now online." else "You are now offline."
+            Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun applyOnlineState(isOnline: Boolean) {
+        val cardColor = if (isOnline) R.color.colorPrimary else R.color.grey_text
+        binding.cardOnlineStatus.setCardBackgroundColor(
+            ContextCompat.getColor(requireContext(), cardColor)
+        )
+        binding.tvOnlineTitle.text = if (isOnline) getString(R.string.driver_online_title)
+                                     else getString(R.string.go_offline)
+        binding.tvOnlineBody.text  = if (isOnline) getString(R.string.driver_online_body)
+                                     else "You are not receiving new ride requests."
     }
 
     private fun observeViewModel() {
