@@ -18,6 +18,9 @@ playServicesMaps = "18.2.0"
 playServicesLocation = "21.2.0"
 material = "1.12.0"
 recyclerview = "1.3.2"
+# Testing (Phase 12)
+archCore = "2.2.0"
+mockk = "1.13.9"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -52,6 +55,11 @@ play-services-location = { group = "com.google.android.gms", name = "play-servic
 kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "coroutines" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 recyclerview = { group = "androidx.recyclerview", name = "recyclerview", version.ref = "recyclerview" }
+# Testing (Phase 12)
+kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "coroutines" }
+arch-core-testing = { group = "androidx.arch.core", name = "core-testing", version.ref = "archCore" }
+mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
+androidx-test-core-ktx = { group = "androidx.test", name = "core-ktx", version = "1.6.1" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
