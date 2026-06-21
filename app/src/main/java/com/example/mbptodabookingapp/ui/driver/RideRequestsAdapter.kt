@@ -25,8 +25,8 @@ class RideRequestsAdapter(
     override fun onBindViewHolder(holder: VH, position: Int) {
         val b = getItem(position)
         holder.b.tvBookingId.text = "Booking #${b.id}"
-        holder.b.tvPickup.text    = "Pickup: ${b.pickup_address}"
-        holder.b.tvDropoff.text   = "Dropoff: ${b.dropoff_address}"
+        holder.b.tvPickup.text    = b.pickup_address
+        holder.b.tvDropoff.text   = b.dropoff_address
         holder.b.btnViewRequest.setOnClickListener { onView(b) }
     }
 }
