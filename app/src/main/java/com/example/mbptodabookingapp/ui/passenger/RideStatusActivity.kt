@@ -5,6 +5,7 @@ import android.os.Handler
 import android.os.Looper
 import android.view.View
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.example.mbptodabookingapp.data.models.Booking
@@ -30,14 +31,12 @@ class RideStatusActivity : AppCompatActivity() {
     private val handler   = Handler(Looper.getMainLooper())
     private val pollDelay = 5_000L
 
+    // Always reschedule — the observer cancels polling when a terminal status arrives.
     private val pollRunnable = object : Runnable {
         override fun run() {
             if (bookingId != -1) {
                 viewModel.fetchBooking(bookingId)
-                val currentStatus = (viewModel.booking.value as? Resource.Success)?.data?.status
-                if (currentStatus == null || !BookingStatus.isTerminal(currentStatus)) {
-                    handler.postDelayed(this, pollDelay)
-                }
+                handler.postDelayed(this, pollDelay)
             }
         }
     }
@@ -55,7 +54,17 @@ class RideStatusActivity : AppCompatActivity() {
 
         if (bookingId == -1) { Toast.makeText(this, "Invalid booking.", Toast.LENGTH_SHORT).show(); finish(); return }
 
+        binding.btnCancelRide.setOnClickListener {
+            AlertDialog.Builder(this)
+                .setTitle("Cancel Ride")
+                .setMessage("Are you sure you want to cancel this booking?")
+                .setPositiveButton("Yes, Cancel") { _, _ -> viewModel.cancelBooking(bookingId) }
+                .setNegativeButton("No", null)
+                .show()
+        }
+
         observeViewModel()
+        observeCancelState()
     }
 
     override fun onSupportNavigateUp(): Boolean { onBackPressedDispatcher.onBackPressed(); return true }
@@ -85,6 +94,23 @@ class RideStatusActivity : AppCompatActivity() {
         }
     }
 
+    private fun observeCancelState() {
+        viewModel.cancelState.observe(this) { state ->
+            when (state) {
+                is Resource.Loading -> binding.progressBar.visibility = View.VISIBLE
+                is Resource.Success -> {
+                    binding.progressBar.visibility = View.GONE
+                    Toast.makeText(this, "Booking cancelled.", Toast.LENGTH_SHORT).show()
+                    finish()
+                }
+                is Resource.Error -> {
+                    binding.progressBar.visibility = View.GONE
+                    Toast.makeText(this, state.message, Toast.LENGTH_LONG).show()
+                }
+            }
+        }
+    }
+
     private fun updateUI(booking: Booking) {
         binding.tvBookingId.text = "Booking #${booking.id}"
         binding.tvPickup.text    = booking.pickup_address
@@ -101,6 +127,20 @@ class RideStatusActivity : AppCompatActivity() {
             else -> getColor(com.example.mbptodabookingapp.R.color.grey)
         }
         binding.tvStatus.setTextColor(color)
+
+        // Cancel button only visible while the booking is still unassigned
+        binding.btnCancelRide.visibility =
+            if (booking.status == BookingStatus.REQUESTED) View.VISIBLE else View.GONE
+
+        // Show driver info card once a driver is assigned
+        val showDriver = booking.status in listOf(
+            BookingStatus.ACCEPTED, BookingStatus.IN_PROGRESS, BookingStatus.COMPLETED
+        ) && booking.driver_name != null
+        binding.cardDriverInfo.visibility = if (showDriver) View.VISIBLE else View.GONE
+        if (showDriver) {
+            binding.tvDriverName.text  = booking.driver_name
+            binding.tvDriverEmail.text = booking.driver_email ?: ""
+        }
 
         if (BookingStatus.isTerminal(booking.status)) {
             handler.removeCallbacks(pollRunnable)
