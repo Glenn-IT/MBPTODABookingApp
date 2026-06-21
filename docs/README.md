@@ -35,8 +35,28 @@ _Last updated: 2026-06-21_
 ```
 http://localhost/ptoda_booking_api/          (PC browser / Postman)
 http://10.0.2.2/ptoda_booking_api/           (Android Emulator)
-http://192.168.0.101/ptoda_booking_api/      (Physical device — use your PC's LAN IP)
+http://<your-pc-ip>/ptoda_booking_api/       (Physical device — see below)
 ```
+
+### Changing the server URL on a physical device (no rebuild needed)
+
+The Android app has a runtime server URL setting — you don't need to edit code or rebuild the app when you change Wi-Fi or use a different laptop.
+
+1. Find your PC's current IP:
+   ```
+   ipconfig
+   ```
+   Look for **IPv4 Address** under **Wireless LAN adapter Wi-Fi** — e.g. `10.240.57.14`
+
+2. Open the app on your phone → on the **Login screen**, tap **"⚙ Server"** at the bottom
+
+3. In the dialog, type: `http://<your-pc-ip>/ptoda_booking_api/`
+
+4. Tap **Save** — the app immediately uses the new URL, no restart needed
+
+5. To go back to the default IP: tap **Reset Default**
+
+> The saved URL persists across logout and app restarts. You only need to change it when your PC's IP changes (i.e. when you connect to a different Wi-Fi network).
 
 ---
 

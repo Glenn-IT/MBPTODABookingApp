@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
     Network Security Configuration
-    Allows HTTP (cleartext) traffic to the local PC running the XAMPP/PHP backend.
-    IMPORTANT: Remove or restrict this before publishing to production.
-    See: docs/flows/ANDROID_SETUP.md → Network Security
+    Allows HTTP (cleartext) to the PC by hostname (NetBIOS on LAN) and emulator loopback.
+    Using the hostname means the IP never needs to change when switching networks/devices.
+    IMPORTANT: Remove or restrict before publishing to production.
 -->
 <network-security-config>
     <domain-config cleartextTrafficPermitted="true">
-        <!-- PC running XAMPP Apache or PHP dev server on local Wi-Fi -->
-        <domain includeSubdomains="false">192.168.0.101</domain>
+        <!-- PC on current Wi-Fi -->
+        <domain includeSubdomains="false">10.240.57.14</domain>
+        <!-- Android Emulator loopback -->
+        <domain includeSubdomains="false">10.0.2.2</domain>
     </domain-config>
 </network-security-config>
 

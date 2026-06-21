@@ -4,6 +4,12 @@
     <color name="colorPrimary">#1565C0</color>
     <color name="colorPrimaryDark">#003c8f</color>
     <color name="colorAccent">#FF8F00</color>
+    <!-- Modern surface/container -->
+    <color name="colorBackground">#F0F4FF</color>
+    <color name="colorSurface">#FFFFFF</color>
+    <color name="colorPrimaryContainer">#DBEAFE</color>
+    <color name="colorHeroSubtitle">#B3CFFF</color>
+    <color name="colorDivider">#E2E8F4</color>
     <!-- Status colors -->
     <color name="statusRequested">#FF8F00</color>
     <color name="statusAccepted">#1565C0</color>
@@ -13,10 +19,10 @@
     <color name="statusCancelled">#757575</color>
     <!-- Base -->
     <color name="white">#FFFFFF</color>
-    <color name="black">#000000</color>
+    <color name="black">#1A1C1E</color>
     <color name="grey">#757575</color>
     <color name="lightGrey">#F5F5F5</color>
-    <!-- Prototype aliases — same values, added for layout compatibility -->
+    <!-- Aliases -->
     <color name="grey_text">#757575</color>
     <color name="green_status">#2E7D32</color>
     <color name="red_status">#C62828</color>

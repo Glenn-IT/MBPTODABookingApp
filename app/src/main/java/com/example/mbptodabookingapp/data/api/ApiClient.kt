@@ -75,17 +75,27 @@ object ApiClient {
             .build()
     }
 
+    private var _currentBaseUrl: String = ""
+    private var _instance: ApiService? = null
+
     /**
-     * The single Retrofit-generated [ApiService] instance.
+     * The Retrofit-generated [ApiService] instance.
+     * Rebuilds automatically if the server URL was changed via the dev settings dialog.
      * Access all API calls via: ApiClient.instance.login(...), etc.
      */
-    val instance: ApiService by lazy {
-        Retrofit.Builder()
-            .baseUrl(Constants.BASE_URL)
-            .client(okHttpClient)
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-            .create(ApiService::class.java)
-    }
+    val instance: ApiService
+        get() {
+            val url = PrefsManager.getServerUrl(appContext)
+            if (url != _currentBaseUrl || _instance == null) {
+                _currentBaseUrl = url
+                _instance = Retrofit.Builder()
+                    .baseUrl(url)
+                    .client(okHttpClient)
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build()
+                    .create(ApiService::class.java)
+            }
+            return _instance!!
+        }
 }
 

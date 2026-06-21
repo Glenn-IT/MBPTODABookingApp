@@ -1,15 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-    Driver Dashboard Fragment — shown when the "Dashboard" BottomNav tab is selected.
-    The map is always visible behind this fragment; cards have solid white/primary backgrounds
-    to keep content readable.
-    Phase 6 — UI Migration Roadmap
--->
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/lightGrey">
+    android:background="@color/colorBackground">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -17,32 +11,29 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <!-- ── Active Ride Banner (hidden when no active ride) ─────────── -->
+        <!-- Active Ride Banner (hidden when no active ride) -->
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/cardActiveRide"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp"
+            android:layout_marginBottom="14dp"
             android:visibility="gone"
             app:cardBackgroundColor="@color/statusInProgress"
-            app:cardCornerRadius="8dp"
-            app:cardElevation="6dp"
-            app:strokeColor="#CE93D8"
-            app:strokeWidth="1dp">
+            app:cardCornerRadius="16dp"
+            app:cardElevation="6dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="16dp">
+                android:padding="18dp">
 
-                <!-- Title row -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
-                    android:layout_marginBottom="8dp">
+                    android:layout_marginBottom="10dp">
 
                     <TextView
                         android:layout_width="0dp"
@@ -50,7 +41,7 @@
                         android:layout_weight="1"
                         android:text="@string/active_ride_banner_title"
                         android:textColor="@color/white"
-                        android:textSize="16sp"
+                        android:textSize="15sp"
                         android:textStyle="bold" />
 
                     <TextView
@@ -58,28 +49,25 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:background="@drawable/shape_status_badge"
-                        android:paddingStart="8dp"
-                        android:paddingTop="3dp"
-                        android:paddingEnd="8dp"
-                        android:paddingBottom="3dp"
+                        android:paddingStart="10dp"
+                        android:paddingTop="4dp"
+                        android:paddingEnd="10dp"
+                        android:paddingBottom="4dp"
                         android:text="@string/active_ride_status_accepted"
                         android:textColor="@color/white"
                         android:textSize="11sp" />
-
                 </LinearLayout>
 
-                <!-- Booking ID -->
                 <TextView
                     android:id="@+id/tvActiveBannerBookingId"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="6dp"
+                    android:layout_marginBottom="8dp"
+                    android:text="@string/active_ride_no_active"
                     android:textColor="#E1BEE7"
                     android:textSize="13sp"
-                    android:textStyle="bold"
-                    android:text="@string/active_ride_no_active" />
+                    android:textStyle="bold" />
 
-                <!-- Pickup row -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -100,19 +88,17 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
+                        android:text="—"
                         android:textColor="@color/white"
-                        android:textSize="13sp"
-                        android:text="—" />
-
+                        android:textSize="13sp" />
                 </LinearLayout>
 
-                <!-- Dropoff row -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
-                    android:layout_marginBottom="12dp">
+                    android:layout_marginBottom="14dp">
 
                     <TextView
                         android:layout_width="60dp"
@@ -127,32 +113,31 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
+                        android:text="—"
                         android:textColor="@color/white"
-                        android:textSize="13sp"
-                        android:text="—" />
-
+                        android:textSize="13sp" />
                 </LinearLayout>
 
-                <!-- Resume button -->
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnResumeRide"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:backgroundTint="@color/white"
                     android:text="@string/active_ride_resume"
-                    android:textColor="@color/statusInProgress" />
+                    android:textColor="@color/statusInProgress"
+                    android:textStyle="bold" />
 
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- Welcome card -->
+        <!-- Welcome hero card -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp"
+            android:layout_marginBottom="14dp"
             app:cardBackgroundColor="@color/colorPrimary"
-            app:cardCornerRadius="8dp"
-            app:cardElevation="4dp">
+            app:cardCornerRadius="16dp"
+            app:cardElevation="0dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -166,7 +151,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="16dp"
                     android:text="@string/driver_status_icon"
-                    android:textSize="36sp" />
+                    android:textSize="40sp" />
 
                 <LinearLayout
                     android:layout_width="0dp"
@@ -180,42 +165,41 @@
                         android:layout_height="wrap_content"
                         android:text="@string/driver_home"
                         android:textColor="@color/white"
-                        android:textSize="18sp"
+                        android:textSize="20sp"
                         android:textStyle="bold" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="2dp"
+                        android:layout_marginTop="4dp"
                         android:text="@string/driver_online_body"
-                        android:textColor="#B3E5FC"
+                        android:textColor="@color/colorHeroSubtitle"
                         android:textSize="12sp" />
-
                 </LinearLayout>
 
-                <!-- Online indicator dot -->
+                <!-- Online dot -->
                 <View
-                    android:layout_width="12dp"
-                    android:layout_height="12dp"
+                    android:layout_width="14dp"
+                    android:layout_height="14dp"
                     android:background="@drawable/shape_online_dot" />
 
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- Live stats card -->
+        <!-- Stats card -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp"
-            app:cardCornerRadius="8dp"
-            app:cardElevation="3dp">
+            android:layout_marginBottom="14dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="2dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:baselineAligned="false"
                 android:orientation="horizontal"
-                android:padding="16dp">
+                android:padding="20dp">
 
                 <!-- Pending count -->
                 <LinearLayout
@@ -231,7 +215,7 @@
                         android:layout_height="wrap_content"
                         android:text="—"
                         android:textColor="@color/statusRequested"
-                        android:textSize="32sp"
+                        android:textSize="36sp"
                         android:textStyle="bold" />
 
                     <TextView
@@ -241,13 +225,12 @@
                         android:text="@string/pending_requests"
                         android:textColor="@color/grey_text"
                         android:textSize="12sp" />
-
                 </LinearLayout>
 
                 <View
                     android:layout_width="1dp"
                     android:layout_height="match_parent"
-                    android:background="@color/lightGrey" />
+                    android:background="@color/colorDivider" />
 
                 <!-- Completed count -->
                 <LinearLayout
@@ -263,7 +246,7 @@
                         android:layout_height="wrap_content"
                         android:text="—"
                         android:textColor="@color/statusCompleted"
-                        android:textSize="32sp"
+                        android:textSize="36sp"
                         android:textStyle="bold" />
 
                     <TextView
@@ -273,7 +256,6 @@
                         android:text="@string/completed_rides"
                         android:textColor="@color/grey_text"
                         android:textSize="12sp" />
-
                 </LinearLayout>
 
             </LinearLayout>
@@ -283,14 +265,16 @@
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:cardCornerRadius="8dp"
-            app:cardElevation="2dp">
+            app:cardCornerRadius="16dp"
+            app:cardElevation="0dp"
+            app:strokeColor="@color/colorDivider"
+            app:strokeWidth="1dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="16dp">
+                android:padding="18dp">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -304,15 +288,12 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:lineSpacingMultiplier="1.4"
+                    android:lineSpacingMultiplier="1.5"
                     android:text="@string/driver_tips_body"
                     android:textColor="@color/grey_text"
                     android:textSize="13sp" />
-
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
     </LinearLayout>
 </ScrollView>
-
-

@@ -109,7 +109,7 @@
 |---------|-----|
 | Postman / browser on PC | `http://localhost/ptoda_booking_api/` |
 | Android Emulator | `http://10.0.2.2/ptoda_booking_api/` |
-| Physical device (same Wi-Fi) | `http://192.168.0.101/ptoda_booking_api/` |
+| Physical device | Set via ⚙ Server dialog in the app — see `README.md → Changing the server URL` |
 
 ---
 
@@ -117,10 +117,10 @@
 
 ### 4.1 Networking Layer ✅
 
-- [x] **4.1.1** `data/api/ApiClient.kt` — Retrofit singleton + OkHttp auth interceptor (injects Bearer token, 401 clears session)
+- [x] **4.1.1** `data/api/ApiClient.kt` — Retrofit + OkHttp auth interceptor (injects Bearer token, 401 clears session); base URL is read from `PrefsManager` on every call and Retrofit rebuilds if it changes
 - [x] **4.1.2** `data/api/ApiService.kt` — all Retrofit interface methods
 - [x] **4.1.3** `data/api/ApiResponse.kt` — generic `ApiResponse<T>` wrapper
-- [x] **4.1.4** `data/local/PrefsManager.kt` — save/get JWT token and user role via SharedPreferences
+- [x] **4.1.4** `data/local/PrefsManager.kt` — JWT token, user role, FCM token, and server URL via SharedPreferences (server URL stored in separate `ptoda_dev_prefs` file so it survives logout)
 
 ### 4.2 Data Models ✅
 
@@ -140,7 +140,7 @@
 
 ### 4.4 Auth Screens ✅
 
-- [x] **4.4.1** `LoginActivity.kt` + `activity_login.xml`
+- [x] **4.4.1** `LoginActivity.kt` + `activity_login.xml` — includes ⚙ Server dialog for runtime URL changes (tap "⚙ Server" at bottom of login screen)
 - [x] **4.4.2** `RegisterActivity.kt` + `activity_register.xml` (role selector shows/hides driver fields)
 - [x] **4.4.3** `AuthViewModel.kt` — login/register LiveData flow
 - [x] **4.4.4** `MainActivity.kt` — auth router: checks JWT + role, navigates to correct home screen

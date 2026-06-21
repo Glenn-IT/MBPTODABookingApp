@@ -17,12 +17,16 @@ import com.example.mbptodabookingapp.data.models.LoggedInUser
  */
 object PrefsManager {
 
-    private const val PREFS_NAME   = "ptoda_prefs"
-    private const val KEY_TOKEN    = "jwt_token"
-    private const val KEY_USER_ID  = "user_id"
-    private const val KEY_ROLE     = "user_role"
-    private const val KEY_NAME     = "user_name"
-    private const val KEY_FCM      = "fcm_token"
+    private const val PREFS_NAME        = "ptoda_prefs"
+    private const val KEY_TOKEN         = "jwt_token"
+    private const val KEY_USER_ID       = "user_id"
+    private const val KEY_ROLE          = "user_role"
+    private const val KEY_NAME          = "user_name"
+    private const val KEY_FCM           = "fcm_token"
+
+    // Separate prefs file for dev config — not cleared on logout
+    private const val DEV_PREFS_NAME    = "ptoda_dev_prefs"
+    private const val KEY_SERVER_URL    = "server_url"
 
     // ── Login / Logout ────────────────────────────────────────────────────────
 
@@ -86,6 +90,25 @@ object PrefsManager {
     fun getFcmToken(context: Context): String? =
         context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
             .getString(KEY_FCM, null)
+
+    // ── Dev / Server Config ───────────────────────────────────────────────────
+    // Stored in a separate prefs file so it is NOT wiped by clearAll() on logout.
+
+    /**
+     * Returns the saved server base URL, falling back to the compiled-in default.
+     * Used by ApiClient so any device can point to any server without a rebuild.
+     */
+    fun getServerUrl(context: Context): String =
+        context.getSharedPreferences(DEV_PREFS_NAME, Context.MODE_PRIVATE)
+            .getString(KEY_SERVER_URL, null)
+            ?: com.example.mbptodabookingapp.utils.Constants.BASE_URL_DEVICE
+
+    /** Persist a new server base URL. ApiClient picks it up on the next API call. */
+    fun saveServerUrl(context: Context, url: String) {
+        context.getSharedPreferences(DEV_PREFS_NAME, Context.MODE_PRIVATE).edit {
+            putString(KEY_SERVER_URL, url)
+        }
+    }
 }
 
 

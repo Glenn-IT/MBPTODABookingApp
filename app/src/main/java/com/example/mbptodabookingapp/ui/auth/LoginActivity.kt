@@ -2,14 +2,19 @@ package com.example.mbptodabookingapp.ui.auth
 
 import android.content.Intent
 import android.os.Bundle
+import android.text.InputType
 import android.view.View
+import android.widget.EditText
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
+import com.example.mbptodabookingapp.data.local.PrefsManager
 import com.example.mbptodabookingapp.databinding.ActivityLoginBinding
 import com.example.mbptodabookingapp.ui.admin.AdminDashboardActivity
 import com.example.mbptodabookingapp.ui.driver.DriverHomeActivity
 import com.example.mbptodabookingapp.ui.passenger.PassengerHomeActivity
+import com.example.mbptodabookingapp.utils.Constants
 import com.example.mbptodabookingapp.utils.Resource
 import com.example.mbptodabookingapp.utils.UserRole
 
@@ -36,6 +41,7 @@ class LoginActivity : AppCompatActivity() {
         binding.tvRegister.setOnClickListener {
             startActivity(Intent(this, RegisterActivity::class.java))
         }
+        binding.tvServerConfig.setOnClickListener { showServerConfigDialog() }
 
         observeViewModel()
     }
@@ -71,6 +77,34 @@ class LoginActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    private fun showServerConfigDialog() {
+        val currentUrl = PrefsManager.getServerUrl(this)
+        val input = EditText(this).apply {
+            setText(currentUrl)
+            inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_URI
+            selectAll()
+            setPadding(48, 24, 48, 24)
+        }
+        AlertDialog.Builder(this)
+            .setTitle("Server URL")
+            .setMessage("Enter the base URL of your XAMPP server.\nExample: http://10.240.57.14/ptoda_booking_api/")
+            .setView(input)
+            .setPositiveButton("Save") { _, _ ->
+                var url = input.text.toString().trim()
+                if (url.isNotEmpty()) {
+                    if (!url.endsWith("/")) url += "/"
+                    PrefsManager.saveServerUrl(this, url)
+                    Toast.makeText(this, "Saved: $url", Toast.LENGTH_LONG).show()
+                }
+            }
+            .setNeutralButton("Reset Default") { _, _ ->
+                PrefsManager.saveServerUrl(this, Constants.BASE_URL_DEVICE)
+                Toast.makeText(this, "Reset to ${Constants.BASE_URL_DEVICE}", Toast.LENGTH_LONG).show()
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
     }
 
     /** Navigate to the correct home screen based on JWT role. */
