@@ -165,14 +165,26 @@
                 </LinearLayout>
             </LinearLayout>
 
-            <!-- Complete Ride button -->
+            <!-- Start Ride button — shown when status = accepted -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnStartRide"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:backgroundTint="@color/statusInProgress"
+                android:text="Start Ride"
+                android:textStyle="bold"
+                android:visibility="gone" />
+
+            <!-- Complete Ride button — shown when status = in_progress -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnCompleteRide"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:backgroundTint="@color/statusCompleted"
                 android:text="@string/complete_ride"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:visibility="gone" />
 
             <ProgressBar
                 android:id="@+id/progressBar"
