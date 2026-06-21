@@ -37,6 +37,7 @@ class ActiveRideActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var viewModel: DriverViewModel
     private var bookingId: Int = -1
     private var googleMap: GoogleMap? = null
+    private var lastAction = "" // "start" or "complete"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,8 +55,11 @@ class ActiveRideActivity : AppCompatActivity(), OnMapReadyCallback {
 
         if (bookingId != -1) viewModel.fetchBooking(bookingId)
 
+        binding.btnStartRide.setOnClickListener {
+            if (bookingId != -1) { lastAction = "start"; viewModel.startRide(bookingId) }
+        }
         binding.btnCompleteRide.setOnClickListener {
-            if (bookingId != -1) viewModel.completeRide(bookingId)
+            if (bookingId != -1) { lastAction = "complete"; viewModel.completeRide(bookingId) }
         }
 
         observeViewModel()
@@ -84,17 +88,19 @@ class ActiveRideActivity : AppCompatActivity(), OnMapReadyCallback {
                 binding.tvPassengerPickup.text  = b.pickup_address
                 binding.tvPassengerDropoff.text = b.dropoff_address
 
+                // Show the right action button based on status
+                binding.btnStartRide.visibility    = if (b.status == "accepted")     View.VISIBLE else View.GONE
+                binding.btnCompleteRide.visibility = if (b.status == "in_progress")  View.VISIBLE else View.GONE
+
                 // Map markers
-                try {
-                    val pickup  = LatLng(b.pickup_lat.toDouble(),  b.pickup_lng.toDouble())
-                    val dropoff = LatLng(b.dropoff_lat.toDouble(), b.dropoff_lng.toDouble())
-                    googleMap?.addMarker(MarkerOptions().position(pickup).title("Pickup"))
-                    googleMap?.addMarker(
-                        MarkerOptions().position(dropoff).title("Dropoff")
-                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))
-                    )
-                    googleMap?.animateCamera(CameraUpdateFactory.newLatLngZoom(pickup, 14f))
-                } catch (_: Exception) { }
+                val pickup  = LatLng(b.pickup_lat,  b.pickup_lng)
+                val dropoff = LatLng(b.dropoff_lat, b.dropoff_lng)
+                googleMap?.addMarker(MarkerOptions().position(pickup).title("Pickup"))
+                googleMap?.addMarker(
+                    MarkerOptions().position(dropoff).title("Dropoff")
+                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))
+                )
+                googleMap?.animateCamera(CameraUpdateFactory.newLatLngZoom(pickup, 14f))
             }
         }
 
@@ -102,19 +108,27 @@ class ActiveRideActivity : AppCompatActivity(), OnMapReadyCallback {
             when (state) {
                 is Resource.Loading -> {
                     binding.progressBar.visibility    = View.VISIBLE
+                    binding.btnStartRide.isEnabled    = false
                     binding.btnCompleteRide.isEnabled = false
                 }
                 is Resource.Success -> {
                     binding.progressBar.visibility    = View.GONE
-                    Toast.makeText(this, getString(R.string.active_ride_complete_success), Toast.LENGTH_SHORT).show()
-                    // Refresh driver bookings so the banner disappears on Dashboard
-                    startActivity(Intent(this, DriverHomeActivity::class.java).apply {
-                        flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
-                    })
-                    finish()
+                    binding.btnStartRide.isEnabled    = true
+                    binding.btnCompleteRide.isEnabled = true
+                    if (lastAction == "start") {
+                        Toast.makeText(this, "Ride started!", Toast.LENGTH_SHORT).show()
+                        viewModel.fetchBooking(bookingId) // refreshes buttons to show Complete
+                    } else {
+                        Toast.makeText(this, getString(R.string.active_ride_complete_success), Toast.LENGTH_SHORT).show()
+                        startActivity(Intent(this, DriverHomeActivity::class.java).apply {
+                            flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+                        })
+                        finish()
+                    }
                 }
                 is Resource.Error -> {
                     binding.progressBar.visibility    = View.GONE
+                    binding.btnStartRide.isEnabled    = true
                     binding.btnCompleteRide.isEnabled = true
                     Toast.makeText(this, state.message, Toast.LENGTH_LONG).show()
                 }
