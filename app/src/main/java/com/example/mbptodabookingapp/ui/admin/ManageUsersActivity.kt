@@ -103,8 +103,22 @@ class ManageUsersActivity : AppCompatActivity() {
         }
 
         viewModel.actionState.observe(this) { state ->
-            if (state is Resource.Error)
-                Toast.makeText(this, state.message, Toast.LENGTH_LONG).show()
+            when (state) {
+                is Resource.Loading -> binding.progressBar.visibility = View.VISIBLE
+                is Resource.Success -> {
+                    binding.progressBar.visibility = View.GONE
+                    Toast.makeText(this, "Action completed successfully.", Toast.LENGTH_SHORT).show()
+                    // Refresh whichever tab is active
+                    when (binding.tabLayout.selectedTabPosition) {
+                        0 -> viewModel.fetchPendingDrivers()
+                        1 -> viewModel.fetchUsers()
+                    }
+                }
+                is Resource.Error -> {
+                    binding.progressBar.visibility = View.GONE
+                    Toast.makeText(this, state.message, Toast.LENGTH_LONG).show()
+                }
+            }
         }
     }
 }
