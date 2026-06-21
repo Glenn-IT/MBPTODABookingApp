@@ -61,9 +61,18 @@ class DriverViewModel(application: Application) : AndroidViewModel(application) 
         viewModelScope.launch { _actionState.value = bookingRepo.rejectRide(bookingId) }
     }
 
+    fun startRide(bookingId: Int) {
+        _actionState.value = Resource.Loading
+        viewModelScope.launch { _actionState.value = bookingRepo.startRide(bookingId) }
+    }
+
     fun completeRide(bookingId: Int) {
         _actionState.value = Resource.Loading
         viewModelScope.launch { _actionState.value = bookingRepo.completeRide(bookingId) }
+    }
+
+    fun updateDriverStatus(isOnline: Boolean) {
+        viewModelScope.launch { bookingRepo.updateDriverStatus(isOnline) }
     }
 
     fun updateLocation(lat: Double, lng: Double) {
