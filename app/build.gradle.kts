@@ -23,12 +23,18 @@ android {
     }
 
     buildTypes {
+        debug {
+            // Physical device on current Wi-Fi; override at runtime via ⚙ Server dialog
+            buildConfigField("String", "BASE_URL", "\"http://10.240.57.14/ptoda_booking_api/\"")
+        }
         release {
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            // Replace with real production HTTPS URL before publishing
+            buildConfigField("String", "BASE_URL", "\"https://your-production-domain.com/ptoda_booking_api/\"")
         }
     }
     compileOptions {
@@ -38,6 +44,7 @@ android {
     buildFeatures {
         compose = true
         viewBinding = true
+        buildConfig = true
     }
 }
 
@@ -80,9 +87,19 @@ dependencies {
     // RecyclerView
     implementation(libs.recyclerview)
 
+    // Encrypted SharedPreferences — secure JWT/token storage
+    implementation("androidx.security:security-crypto:1.1.0-alpha06")
+
+    // Unit tests (JVM) — Phase 12.1
     testImplementation(libs.junit)
+    testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.arch.core.testing)
+    testImplementation(libs.mockk)
+
+    // Instrumented tests (device/emulator) — Phase 12.2
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+    androidTestImplementation(libs.androidx.test.core.ktx)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     debugImplementation(libs.androidx.compose.ui.tooling)
