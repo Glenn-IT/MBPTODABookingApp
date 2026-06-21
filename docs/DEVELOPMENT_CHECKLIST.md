@@ -267,15 +267,11 @@ These are security threats or runtime crashes. Fix before any feature work.
 
 ### 7.1 Security — Immediate Threats
 
-- [!] **7.1.1** **Delete `check_admin.php` from web root** — exposes admin password hash to any LAN caller with zero auth
-  - File: `C:\xampp\htdocs\ptoda_booking_api\check_admin.php`
+- [x] **7.1.1** **Delete `check_admin.php` from web root** — ✅ Deleted 2026-06-21
 
-- [!] **7.1.2** **Delete `fix_admin.php` from web root** — resets admin password to `admin123` for any LAN HTTP caller
-  - File: `C:\xampp\htdocs\ptoda_booking_api\fix_admin.php`
+- [x] **7.1.2** **Delete `fix_admin.php` from web root** — ✅ Deleted 2026-06-21
 
-- [!] **7.1.3** **Set a real JWT secret** in `config/config.php:6`
-  - Replace `'CHANGE_THIS_TO_A_LONG_RANDOM_SECRET_KEY'` with a real random 256-bit hex string
-  - Until fixed: every JWT in the system is forgeable by anyone who reads the config
+- [x] **7.1.3** **Set a real JWT secret** in `config/config.php:6` — ✅ Set to 256-bit random hex 2026-06-21
 
 - [!] **7.1.4** **Set the real FCM Server Key** in `config/config.php:11`
   - Replace `'YOUR_FCM_SERVER_KEY_HERE'` with the key from Firebase Console → Project Settings → Cloud Messaging
@@ -293,46 +289,27 @@ These are security threats or runtime crashes. Fix before any feature work.
 
 ### 7.2 Runtime Bugs — Will Crash the App
 
-- [!] **7.2.1** **Fix `Booking.kt` coordinate types** — `pickup_lat`, `pickup_lng`, `dropoff_lat`, `dropoff_lng` are declared `String` but MySQL returns JSON numbers. Gson produces `null`, then `.toDouble()` throws `NullPointerException`.
-  - File: `data/models/Booking.kt:28-32`
-  - Fix: Change all four fields from `String` to `Double`
-  - Also: Remove all `.toDouble()` call sites in `ActiveRideActivity.kt:89-90` and `RideRequestActivity.kt:99-103`
+- [x] **7.2.1** **Fix `Booking.kt` coordinate types** — ✅ Changed String→Double; removed .toDouble() in ActiveRideActivity; RideRequestActivity now uses getDoubleExtra. 2026-06-21
 
-- [ ] **7.2.2** **Add `passenger_name` to `Booking.kt`** — `GET /driver/requests` returns `passenger_name` in JSON but the data class has no field for it. Gson drops it silently. Driver sees blank where passenger name should appear.
-  - Fix: Add `val passenger_name: String? = null` to `Booking.kt`
-  - Also: Display it in `item_ride_request.xml` via `RideRequestsAdapter`
+- [x] **7.2.2** **Add `passenger_name` to `Booking.kt`** — ✅ Added field; adapter now shows address without redundant "Pickup:/Dropoff:" prefix. 2026-06-21
 
-- [ ] **7.2.3** **Add driver info fields to `Booking.kt`** — `GET /bookings/{id}` returns `driver_name` and `driver_email` (from JOIN) but `Booking.kt` has no such fields. Passenger cannot see who accepted their ride.
-  - Fix: Add `val driver_name: String? = null`, `val driver_email: String? = null` to `Booking.kt`
-  - Also: Add `TextView` widgets to `activity_ride_status.xml` and populate them in `RideStatusActivity`
+- [x] **7.2.3** **Add driver info fields to `Booking.kt`** — ✅ Added driver_name/driver_email fields; driver card added to activity_ride_status.xml; RideStatusActivity shows card when status is accepted/in_progress/completed. 2026-06-21
 
 ### 7.3 Logic Bugs
 
-- [ ] **7.3.1** **Fix `ManageUsersActivity` success feedback** — admin actions (approve/deactivate/delete) succeed silently. The `actionState` observer only handles `Resource.Error`.
-  - File: `ManageUsersActivity.kt:105-108`
-  - Fix: Add a success `Toast` in the `Resource.Success` branch of the observer
+- [x] **7.3.1** **Fix `ManageUsersActivity` success feedback** — ✅ Added success Toast + auto-refresh of the active tab. 2026-06-21
 
 - [ ] **7.3.2** **Fix `rejectRide()` ownership check** — any authenticated driver can reject any `requested` booking. No check verifies the rejecting driver was associated with the request.
   - File: `DriverController.php:67-81`
   - Fix: Decide and document whether rejection is open to any driver (broadcast model) or restricted. If restricted, add a check.
 
-- [ ] **7.3.3** **Fix polling reads stale state** in `RideStatusActivity` — `pollRunnable` checks terminal status from the previous ViewModel value before the API response arrives, scheduling one extra unnecessary poll after a terminal status.
-  - File: `RideStatusActivity.kt:33-43`
-  - Fix: Move the terminal-status check inside the booking observer (after the response updates the ViewModel), not before the next poll is posted.
+- [x] **7.3.3** **Fix polling reads stale state** in `RideStatusActivity` — ✅ pollRunnable now always reschedules; observer cancels via removeCallbacks when terminal. 2026-06-21
 
-- [ ] **7.3.4** **Require `license_no` + `vehicle_no` for driver registration** — currently accepted as empty strings (`?? ''`). A driver can register with blank license/vehicle fields.
-  - File: `AuthController.php:59-63`
-  - Fix: Add validation: if `role === 'driver'` and `license_no` or `vehicle_no` is empty, return 422.
+- [x] **7.3.4** **Require `license_no` + `vehicle_no` for driver registration** — ✅ Added 422 validation in AuthController.php. 2026-06-21
 
 ### 7.4 Security — High Priority (but not instant threats)
 
-- [ ] **7.4.1** **Set `HttpLoggingInterceptor` to `NONE` for release builds**
-  - File: `data/api/ApiClient.kt:65-67`
-  - Fix:
-    ```kotlin
-    val level = if (BuildConfig.DEBUG) HttpLoggingInterceptor.Level.BODY
-                else HttpLoggingInterceptor.Level.NONE
-    ```
+- [x] **7.4.1** **Set `HttpLoggingInterceptor` to `NONE` for release builds** — ✅ Gated on BuildConfig.DEBUG; also enabled buildConfig in build.gradle.kts. 2026-06-21
 
 - [ ] **7.4.2** **Move Maps API key to `local.properties` + `BuildConfig`**
   - File: `AndroidManifest.xml:28` (key `AIzaSyD4we-...` is hardcoded)
@@ -352,191 +329,213 @@ These are security threats or runtime crashes. Fix before any feature work.
 
 These endpoints are needed for the Android app to have a complete booking lifecycle.
 
-### 8.1 Passenger Cancel Ride
+### 8.1 Passenger Cancel Ride ✅
 
-- [ ] **8.1.1** Add `POST /bookings/{id}/cancel` route to `index.php`
-- [ ] **8.1.2** Add `cancelBooking(int $bookingId)` method to `BookingController.php`
-  - Auth: passenger only
-  - Validate: caller is the booking's passenger_id
-  - Validate: current status is `requested` (cannot cancel once accepted)
-  - Action: set status to `cancelled`, log to booking_logs
-- [ ] **8.1.3** Add `cancelBooking(id)` to `ApiService.kt` (Kotlin)
-- [ ] **8.1.4** Add `cancelBooking(id)` to `BookingRepository.kt`
+- [x] **8.1.1** Add `POST /bookings/{id}/cancel` route to `index.php`
+- [x] **8.1.2** Add `cancelBooking(int $bookingId)` to `BookingController.php` — passenger only, requested status only, logs status change
+- [x] **8.1.3** Add `cancelBooking(id)` to `ApiService.kt`
+- [x] **8.1.4** Add `cancelBooking(id)` to `BookingRepository.kt`
 - [ ] **8.1.5** Test via Postman: cancel a `requested` booking, verify status = `cancelled`
 
-### 8.2 Driver Start Ride (`in_progress` transition)
+### 8.2 Driver Start Ride (`in_progress` transition) ✅
 
-- [ ] **8.2.1** Add `POST /driver/start/{id}` route to `index.php`
-- [ ] **8.2.2** Add `startRide(int $bookingId)` method to `DriverController.php`
-  - Auth: driver only
-  - Validate: caller is booking's `driver_id`
-  - Validate: current status is `accepted`
-  - Action: set status to `in_progress`, log to booking_logs
-  - Optional: FCM push to passenger — "Driver has started your ride"
-- [ ] **8.2.3** Add `startRide(id)` to `ApiService.kt`
-- [ ] **8.2.4** Add `startRide(id)` to `BookingRepository.kt` (or `DriverViewModel.kt`)
+- [x] **8.2.1** Add `POST /driver/start/{id}` route to `index.php`
+- [x] **8.2.2** Add `startRide(int $bookingId)` to `DriverController.php` — driver ownership + accepted-only guard + FCM push to passenger
+- [x] **8.2.3** Add `startRide(id)` to `ApiService.kt`
+- [x] **8.2.4** Add `startRide(id)` to `BookingRepository.kt` and `DriverViewModel.kt`
 - [ ] **8.2.5** Test via Postman: start an `accepted` booking, verify status = `in_progress`
 
-### 8.3 Driver Online/Offline Toggle
+### 8.3 Driver Online/Offline Toggle ✅
 
-- [ ] **8.3.1** Add `is_online TINYINT(1) DEFAULT 1` column to `driver_info` table (run ALTER TABLE or update seed.sql)
-- [ ] **8.3.2** Add `PUT /driver/status` route to `index.php`
-- [ ] **8.3.3** Add `updateOnlineStatus(int $driverId, bool $isOnline)` to `DriverController.php`
-- [ ] **8.3.4** Update `GET /driver/requests` — filter to only return bookings to online drivers OR leave open (decide)
-- [ ] **8.3.5** Add `updateDriverStatus(isOnline: Boolean)` to `ApiService.kt`
-- [ ] **8.3.6** Test via Postman: toggle offline, verify driver doesn't receive new requests (if filtering added)
+- [x] **8.3.1** `is_online TINYINT(1) DEFAULT 1` added via ALTER TABLE (live DB) + schema.sql updated
+- [x] **8.3.2** Add `PUT /driver/status` route to `index.php`
+- [x] **8.3.3** Add `updateOnlineStatus()` to `DriverController.php`
+- [ ] **8.3.4** Update `GET /driver/requests` — filter to online drivers only (decided: left open — requests are broadcast to all drivers regardless of status)
+- [x] **8.3.5** Add `updateDriverStatus(isOnline: Boolean)` to `ApiService.kt`, `BookingRepository.kt`, `DriverViewModel.kt`
+- [ ] **8.3.6** Test via Postman: toggle offline, call PUT /driver/status with is_online=false
 
-### 8.4 Minor API Cleanup
+### 8.4 Minor API Cleanup ✅
 
-- [ ] **8.4.1** Fix `BookingController.php:58-63` — the ownership check `$booking['driver_id'] == $auth['user_id']` returns 403 for drivers viewing `requested` bookings where `driver_id` is NULL. Either allow drivers to view `requested` bookings, or document that `RideRequestActivity` must always use Intent extras.
-- [ ] **8.4.2** Move `PUT /user/fcm-token` logic from inline `index.php:100-109` into a `UserController.php` method for consistency.
-- [ ] **8.4.3** Add `GET /admin/bookings/{id}/logs` if you want the `booking_logs` audit trail to be readable (currently write-only).
+- [x] **8.4.1** Fixed `BookingController.php` — any driver can now view `requested` bookings (driver_id is NULL); ownership check updated
+- [x] **8.4.2** Moved `PUT /user/fcm-token` to new `UserController.php`; index.php cleaned up
+- [ ] **8.4.3** `GET /admin/bookings/{id}/logs` — deferred (audit trail is write-only; add if needed later)
 
 ---
 
 ## Phase 9 — Missing Android Features
 
-### 9.1 Passenger Cancel Ride UI
+### 9.1 Passenger Cancel Ride UI ✅
 
-- [ ] **9.1.1** Add a Cancel button to `activity_ride_status.xml` (visible only when status = `requested`)
-- [ ] **9.1.2** Add `cancelBooking(id)` call in `RideStatusActivity.kt` (show confirmation dialog first)
-- [ ] **9.1.3** On success: show toast + finish activity (or update status display to `cancelled`)
+- [x] **9.1.1** Cancel button added to `activity_ride_status.xml` — shown only when status = `requested`
+- [x] **9.1.2** `cancelBooking()` added to `PassengerViewModel`; confirmation AlertDialog in `RideStatusActivity`
+- [x] **9.1.3** On success: toast + finish()
 - [ ] **9.1.4** Test: passenger cancels a `requested` booking; status updates correctly
 
-### 9.2 Driver Start Ride UI
+### 9.2 Driver Start Ride UI ✅
 
-- [ ] **9.2.1** Add a "Start Ride" button to `activity_active_ride.xml` (visible when status = `accepted`)
-- [ ] **9.2.2** Wire "Start Ride" → `POST /driver/start/{id}` in `ActiveRideActivity.kt`
-- [ ] **9.2.3** On success: hide "Start Ride", show "Complete Ride" (for `in_progress` status)
+- [x] **9.2.1** "Start Ride" button added to `activity_active_ride.xml` (gone by default)
+- [x] **9.2.2** Wired → `viewModel.startRide(bookingId)` in `ActiveRideActivity`; `lastAction` tracks start vs complete
+- [x] **9.2.3** Status-driven visibility: `accepted` → Start visible, `in_progress` → Complete visible; on start success, `fetchBooking()` refreshes both
 - [ ] **9.2.4** Test: full flow `accepted → in_progress → completed`
 
-### 9.3 Passenger Sees Driver Info After Accept
+### 9.3 Passenger Sees Driver Info After Accept ✅
 
-- [ ] **9.3.1** After fixing 7.2.3 (add `driver_name` to `Booking.kt`), add `TextView` for driver name + email in `activity_ride_status.xml`
-- [ ] **9.3.2** Show driver info card in `RideStatusActivity` when booking status becomes `accepted`
+- [x] **9.3.1** Driver card (`cardDriverInfo`, `tvDriverName`, `tvDriverEmail`) added in Phase 7 (7.2.3)
+- [x] **9.3.2** `RideStatusActivity` shows the card when status is `accepted`/`in_progress`/`completed` and `driver_name != null`
 - [ ] **9.3.3** Test: passenger status screen shows driver name after driver accepts
 
-### 9.4 Driver Online/Offline Toggle
+### 9.4 Driver Online/Offline Toggle ✅
 
-- [ ] **9.4.1** After Phase 8.3 (backend done), add toggle switch to `DriverStatusFragment`
-- [ ] **9.4.2** Wire toggle → `PUT /driver/status` in `DriverViewModel.kt`
-- [ ] **9.4.3** Persist online/offline state visually on toggle (update status text + dot color)
-- [ ] **9.4.4** Test: toggle offline → re-open app → toggle state is correct
+- [x] **9.4.1** `SwitchMaterial` (`switchOnline`) added to `fragment_driver_status.xml` alongside new IDs `tvOnlineTitle`, `tvOnlineBody`, `cardOnlineStatus`
+- [x] **9.4.2** Toggle wired → `viewModel.updateDriverStatus(isChecked)` in `DriverStatusFragment`
+- [x] **9.4.3** Card background + title + body text update instantly on toggle (blue = online, grey = offline)
+- [ ] **9.4.4** Test: toggle offline → re-open app → verify state persists on server
 
-### 9.5 Forgot Password
+### 9.5 Forgot Password ✅ (partial)
 
-- [ ] **9.5.1** Decide on reset flow: admin-side reset vs email OTP (Firebase Auth or custom)
-- [ ] **9.5.2** Add `POST /auth/forgot-password` endpoint (PHP)
-- [ ] **9.5.3** Add a "Forgot Password?" `TextView` to `activity_login.xml` (string resource already exists)
-- [ ] **9.5.4** Add click handler in `LoginActivity.kt` → navigate to reset flow screen
+- [x] **9.5.1** Decision: admin-side reset only (no email OTP backend yet)
+- [ ] **9.5.2** `POST /auth/forgot-password` — deferred (no email server configured)
+- [x] **9.5.3** "Forgot Password?" `TextView` (`tvForgotPassword`) added to `activity_login.xml`
+- [x] **9.5.4** Click shows AlertDialog: "Contact your PTODA admin to reset your password."
 
-### 9.6 Input Validation (Android Side)
+### 9.6 Input Validation ✅
 
-- [ ] **9.6.1** `LoginActivity` — show `TextInputLayout` error if email or password is empty before API call
-- [ ] **9.6.2** `RegisterActivity` — validate email format, password ≥ 6 chars, required driver fields
-- [ ] **9.6.3** `BookRideActivity` — validate pickup + dropoff are set before allowing "Request Ride"
-- [ ] **9.6.4** Test: each validation shows an inline error (not a Toast)
-
----
-
-## Phase 10 — Security Hardening
-
-- [ ] **10.1** **Migrate `PrefsManager` to `EncryptedSharedPreferences`**
-  - Add `implementation("androidx.security:security-crypto:1.1.0-alpha06")` to `build.gradle.kts`
-  - Replace `SharedPreferences` instantiation with `EncryptedSharedPreferences.create(...)` — same key/value API
-  - File: `data/local/PrefsManager.kt`
-
-- [ ] **10.2** **Rate limiting on `/auth/login`** (PHP)
-  - Add IP-based rate limit: max 5 attempts per minute per IP
-  - Options: in-memory via `$_SESSION` (simple), APCu cache, or Apache `.htaccess` mod_ratelimit
-  - File: `index.php` or `.htaccess`
-
-- [ ] **10.3** **Move PHP secrets to a `.env` file**
-  - Install `vlucas/phpdotenv` via Composer (or use manual `parse_ini_file()`)
-  - Move `JWT_SECRET` and `FCM_SERVER_KEY` out of `config/config.php` into `.env`
-  - Add `.env` to `.gitignore`, provide `.env.example` template
-  - Files: `config/config.php`, `.gitignore`, new `.env` + `.env.example`
-
-- [ ] **10.4** **Enable HTTPS on the backend**
-  - For local dev: skip or use a self-signed cert
-  - For production: set up Let's Encrypt on the VPS
-  - Update `BASE_URL` constants in `utils/Constants.kt` to `https://`
-  - Remove cleartext exception in `res/xml/network_security_config.xml`
-
-- [ ] **10.5** **Restrict CORS origin** in `index.php:7`
-  - Change `Access-Control-Allow-Origin: *` to the specific production domain
-  - Keep `*` for development only (gate on `APP_ENV`)
-
-- [ ] **10.6** **Fix generic login error message for driver account existence leak**
-  - File: `AuthController.php:97-99`
-  - Both "pending approval" and "wrong password" should return the same generic message to prevent account enumeration
+- [x] **9.6.1** `LoginActivity` — empty email/password + email format check (Patterns.EMAIL_ADDRESS)
+- [x] **9.6.2** `RegisterActivity` — name, email format, password ≥ 6 chars, license/vehicle for drivers
+- [x] **9.6.3** `BookRideActivity` — all 6 fields validated before API call
+- [ ] **9.6.4** Test: each validation shows an inline TIL error (not a Toast)
 
 ---
 
-## Phase 11 — Production Readiness
+## Phase 10 — Security Hardening ✅
 
-- [ ] **11.1** **User-friendly error messages (Android)**
-  - Create `ErrorHandler` or `BaseRepository` extension — map HTTP status codes to friendly strings
-  - 401 → "Session expired, please log in again"
-  - 403 → "You don't have permission to do that"
-  - 404 → "Not found"
-  - 422 → Display field-specific errors from API response
-  - 500 → "Something went wrong. Please try again."
-  - Populate `strings.xml` with all error strings
+- [x] **10.1** **Migrate `PrefsManager` to `EncryptedSharedPreferences`**
+  - Added `androidx.security:security-crypto:1.1.0-alpha06` to `build.gradle.kts`
+  - `PrefsManager.kt` now uses `MasterKey.Builder` + `EncryptedSharedPreferences.create()` with AES256-GCM/SIV; falls back to plain prefs if keystore unavailable
+  - Dev config (server URL) kept in plain `ptoda_dev_prefs` — not sensitive
 
-- [ ] **11.2** **Switch base URL by build type**
-  - File: `app/build.gradle.kts`
-    ```kotlin
-    buildTypes {
-        debug {
-            buildConfigField("String", "BASE_URL", "\"http://10.0.2.2/ptoda_booking_api/\"")
-        }
-        release {
-            buildConfigField("String", "BASE_URL", "\"https://your-production-domain.com/api/\"")
-        }
-    }
-    ```
-  - File: `utils/Constants.kt` — replace hardcoded URL with `BuildConfig.BASE_URL`
+- [x] **10.2** **Rate limiting on `/auth/login`** (PHP)
+  - New `helpers/RateLimiter.php` — file-based (JSON in `storage/rate_limit.json`), 5 attempts/60s per IP
+  - Returns HTTP 429 on breach; counter resets on successful login
+  - Called at the start of `AuthController::login()`
 
-- [ ] **11.3** **Remove debug files and TODO comments**
-  - Delete `check_admin.php` and `fix_admin.php` (also in Phase 7 — done first)
-  - Search for `// TODO`, `// FIXME`, `// remove when API is active` across all files and resolve or remove
+- [x] **10.3** **Move PHP secrets to a `.env` file**
+  - `config/config.php` now reads via `parse_ini_file()` → `JWT_SECRET`, `FCM_SERVER_KEY`, `APP_ENV`; falls back to `getenv()` for server-set env vars
+  - `.env` created (gitignored); `.env.example` committed as template
+  - `.gitignore` updated: removed old `config/config.php` exclusion, added `.env` and `storage/`
 
-- [ ] **11.4** **VPS deployment plan**
+- [~] **10.4** **Enable HTTPS on the backend** (deferred — production-only)
+  - Note added in `Constants.kt` → replace `http://` with `https://` domain and remove cleartext exception from `network_security_config.xml` when deploying
+  - Local dev continues to use HTTP
+
+- [x] **10.5** **Restrict CORS origin** in `index.php`
+  - `Access-Control-Allow-Origin` is `*` when `APP_ENV=development`, production domain when `APP_ENV=production`
+  - Config load moved before headers so `APP_ENV` constant is available
+  - Error detail (`'error'` field) also gated on `APP_ENV !== 'production'`
+
+- [x] **10.6** **Fix generic login error message for driver account existence leak**
+  - Pending-driver path now returns `401 "Invalid email or password."` (same as wrong password) instead of a distinct `403 "pending approval"` message, preventing account enumeration
+
+---
+
+## Phase 11 — Production Readiness ✅
+
+- [x] **11.1** **User-friendly error messages (Android)** — ✅ 2026-06-21
+  - `BaseRepository.parseApiError()` now maps HTTP codes to friendly strings (401/403/404/409/422/429/500) when the API body has no parseable message
+  - Error string resources added to `strings.xml` (error_unauthorized, error_forbidden, error_not_found, error_unprocessable, error_too_many_requests, error_server, error_network)
+
+- [x] **11.2** **Switch base URL by build type** — ✅ 2026-06-21
+  - `build.gradle.kts` → debug `buildConfigField BASE_URL` = device URL; release = production placeholder
+  - `Constants.kt` → `BASE_URL = BuildConfig.BASE_URL` (compile-time injection; ⚙ Server dialog still overrides at runtime)
+
+- [x] **11.3** **Remove debug files and TODO comments** — ✅ 2026-06-21
+  - `check_admin.php` + `fix_admin.php` deleted in Phase 7
+  - `BookingController.php:40` TODO replaced with a note referencing checklist 7.1.5 (FCM migration blocker)
+  - `data_extraction_rules.xml` boilerplate TODO replaced with correct EncryptedSharedPreferences backup exclusion rule
+
+- [~] **11.4** **VPS deployment plan** — (documentation only, deferred until deployment)
   - Choose VPS provider (DigitalOcean, Linode, etc.)
   - Install Nginx + PHP-FPM + MySQL
   - Set up domain name + Let's Encrypt SSL certificate
   - Migrate DB from XAMPP to remote MySQL
-  - Update `BASE_URL` to production URL in release build config
+  - Update debug `buildConfigField BASE_URL` in `build.gradle.kts` to production HTTPS URL; remove cleartext exception from `network_security_config.xml`
 
-- [ ] **11.5** **CI/CD pipeline basics**
-  - Add GitHub Actions workflow: `./gradlew assembleDebug` + `./gradlew test` on every push to master
-  - Add PHP syntax check step: `find . -name "*.php" -exec php -l {} \;`
+- [x] **11.5** **CI/CD pipeline basics** — ✅ 2026-06-21
+  - `.github/workflows/ci.yml` created: `assembleDebug` + `test` on push/PR to master; JDK 17 + Gradle cache
+  - PHP syntax check job included but gated (`if: false`) — activate by committing PHP sources under `backend/` in this repo
 
 ---
 
-## Phase 12 — Testing
+## Phase 12 — Testing ✅
 
-### 12.1 Unit Tests (Android)
+### 12.1 Unit Tests (Android) ✅ — BUILD SUCCESSFUL 2026-06-21
 
-- [ ] **12.1.1** `AuthViewModel` — login success, login failure, empty field validation
-- [ ] **12.1.2** `BookingRepository` — createBooking success/error paths
-- [ ] **12.1.3** `Resource` sealed class behavior
-- [ ] **12.1.4** `PrefsManager` — save and retrieve JWT, clear session
+Dependencies added: `mockk:1.13.9`, `kotlinx-coroutines-test`, `androidx.arch.core:core-testing`
 
-### 12.2 Instrumented Tests (Android)
+- [x] **12.1.1** `AuthRepository` login/register paths (AuthViewModel delegates directly to repo) — `AuthRepositoryTest.kt`
+  - login success → `Resource.Success` with token + user
+  - login wrong password → `Resource.Error` with API message
+  - login network failure → friendly "No internet connection" message
+  - login HTTP 429 → body message preferred over generic fallback
+  - register success → `Resource.Success` with user_id
+  - register duplicate email → `Resource.Error` with API message
+  - *Input validation (empty fields) is in LoginActivity — tested in 12.2.1*
+- [x] **12.1.2** `BookingRepository` — `BookingRepositoryTest.kt`
+  - createBooking success → `Resource.Success(booking_id)`
+  - createBooking API error → `Resource.Error(message)`
+  - createBooking IOException → friendly error
+  - cancelBooking success/error/network paths
+  - acceptRide success; rejectRide API error
+- [x] **12.1.3** `Resource` sealed class + `BookingStatus.isTerminal()` — `ResourceTest.kt`
+  - 10 test cases covering all status values and terminal-state helper
+- [x] **12.1.4** `PrefsManager` — moved to instrumented tests (requires Android Keystore) — see 12.2
 
-- [ ] **12.2.1** Login flow: enter credentials → verify correct role navigation
-- [ ] **12.2.2** Register flow: driver fields show/hide on role selection
-- [ ] **12.2.3** Booking form: empty pickup/dropoff shows validation error
+### 12.2 Instrumented Tests (Android) ✅ — 2026-06-21
 
-### 12.3 PHP API Contract Tests (PHPUnit)
+Run on device/emulator: `./gradlew connectedDebugAndroidTest`
 
-- [ ] **12.3.1** `POST /auth/register` — returns 201 with valid data, 422 on missing fields, 409 on duplicate email
-- [ ] **12.3.2** `POST /auth/login` — returns JWT on valid creds, 401 on wrong password, 403 on inactive account
-- [ ] **12.3.3** Protected route — returns 401 without token, 403 with wrong role
-- [ ] **12.3.4** `POST /bookings` — returns 201 with passenger token, 403 with driver token
-- [ ] **12.3.5** `POST /driver/accept/{id}` — returns 200 and updates status, 409 if already accepted
+- [x] **12.2.1** `LoginActivityTest.kt` — input validation (no live server needed)
+  - Empty email → tilEmail error shown
+  - Invalid email format → tilEmail error shown
+  - Valid email + empty password → tilPassword error shown
+  - *Full navigation test (login → home) requires live server — covered by manual E2E matrix (6.10)*
+- [x] **12.2.2** `RegisterActivityTest.kt` — driver fields toggle
+  - Driver fields hidden by default (passenger selected)
+  - Driver fields visible when "Driver" radio selected
+  - Driver fields hidden again when "Passenger" re-selected
+  - Empty name → tilName error; driver TIL visible when driver selected
+- [x] **12.1.4 / 12.2.3** `PrefsManagerTest.kt` — 12 test cases
+  - saveLoginData: token, role, userId, name all retrievable
+  - isLoggedIn true after save, false before login
+  - clearAll removes token + FCM token → isLoggedIn false
+  - saveServerUrl + getServerUrl round-trip
+
+### 12.3 PHP API Contract Tests (PHPUnit) ✅ — 2026-06-21
+
+Requires: XAMPP running + seed data (`database/seed.sql`) + `composer install`
+
+Setup: `cd C:\xampp\htdocs\ptoda_booking_api && composer install && vendor/bin/phpunit --testdox`
+
+- [x] **12.3.1** `POST /auth/register` — `tests/ApiContractTest.php`
+  - 201 with valid passenger data (new unique email)
+  - 422 on missing required fields
+  - 409 on duplicate email (`juan@test.com`)
+  - 422 for driver without license_no / vehicle_no
+- [x] **12.3.2** `POST /auth/login`
+  - 200 + JWT token on valid credentials (`juan@test.com`)
+  - 401 on wrong password (same generic message as wrong password — 10.6)
+  - 422 on missing password field
+  - 401 for non-existent account (same message — anti-enumeration)
+- [x] **12.3.3** Protected route enforcement
+  - 401 without token
+  - 403 passenger token on driver-only endpoint
+  - 403 driver token on admin-only endpoint
+- [x] **12.3.4** `POST /bookings`
+  - 201 + booking_id with passenger token
+  - 403 with driver token
+- [x] **12.3.5** `POST /driver/accept/{id}`
+  - 200 + status updated on first accept
+  - 409 on second accept (already accepted)
 
 ---
 
@@ -544,15 +543,15 @@ These endpoints are needed for the Android app to have a complete booking lifecy
 
 | ID | Severity | File | Description | Phase |
 |----|----------|------|-------------|-------|
-| BUG-017 | 🔴 Critical | `Booking.kt:28-32` | Coordinates typed `String`, Gson returns `null`, `.toDouble()` throws NPE | 7.2.1 |
-| BUG-018 | 🟠 High | `Booking.kt` | `passenger_name` silently dropped by Gson; not in data class | 7.2.2 |
-| BUG-019 | 🟠 High | `Booking.kt` | `driver_name`, `driver_email` silently dropped; passenger never sees driver info | 7.2.3 |
-| BUG-020 | 🟠 High | `DriverController.php:79` | `rejectRide()` has no ownership check | 7.3.2 |
-| BUG-021 | 🟠 High | `AuthController.php:59-63` | Driver registration accepts empty license/vehicle | 7.3.4 |
-| BUG-022 | 🟡 Medium | `RideStatusActivity.kt:33-43` | Polling reads stale state; one extra poll after terminal status | 7.3.3 |
-| BUG-023 | 🟡 Medium | `ManageUsersActivity.kt:105-108` | Admin actions show no success feedback | 7.3.1 |
+| BUG-017 | ✅ Fixed | `Booking.kt` | Coordinates changed String→Double; .toDouble() calls removed | 7.2.1 |
+| BUG-018 | ✅ Fixed | `Booking.kt` | `passenger_name` field added | 7.2.2 |
+| BUG-019 | ✅ Fixed | `Booking.kt` | `driver_name`/`driver_email` added; driver card shown in RideStatusActivity | 7.2.3 |
+| BUG-020 | 🟠 High | `DriverController.php:79` | `rejectRide()` has no ownership check (broadcast model — any driver can reject) | 7.3.2 |
+| BUG-021 | ✅ Fixed | `AuthController.php` | Driver registration now requires license_no + vehicle_no | 7.3.4 |
+| BUG-022 | ✅ Fixed | `RideStatusActivity.kt` | pollRunnable always reschedules; observer cancels on terminal status | 7.3.3 |
+| BUG-023 | ✅ Fixed | `ManageUsersActivity.kt` | Success toast + list auto-refresh added | 7.3.1 |
 | BUG-024 | 🟡 Medium | `BookingController.php:58-63` | `GET /bookings/{id}` returns 403 for drivers on `requested` bookings (`driver_id` is NULL) | 8.4.1 |
-| BUG-025 | 🟡 Medium | `ApiClient.kt:65-67` | `HttpLoggingInterceptor` at BODY level in all builds, logs JWT + passwords | 7.4.1 |
+| BUG-025 | ✅ Fixed | `ApiClient.kt` | Logging now NONE in release builds via BuildConfig.DEBUG | 7.4.1 |
 
 ---
 
