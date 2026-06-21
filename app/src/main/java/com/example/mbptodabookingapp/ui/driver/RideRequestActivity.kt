@@ -83,25 +83,19 @@ class RideRequestActivity : AppCompatActivity(), OnMapReadyCallback {
     private fun populateFromIntent() {
         val pickupAddress  = intent.getStringExtra(EXTRA_PICKUP_ADDRESS)  ?: ""
         val dropoffAddress = intent.getStringExtra(EXTRA_DROPOFF_ADDRESS) ?: ""
-        val pickupLat      = intent.getStringExtra(EXTRA_PICKUP_LAT)      ?: ""
-        val pickupLng      = intent.getStringExtra(EXTRA_PICKUP_LNG)      ?: ""
-        val dropoffLat     = intent.getStringExtra(EXTRA_DROPOFF_LAT)     ?: ""
-        val dropoffLng     = intent.getStringExtra(EXTRA_DROPOFF_LNG)     ?: ""
+        val pickupLat      = intent.getDoubleExtra(EXTRA_PICKUP_LAT,  0.0)
+        val pickupLng      = intent.getDoubleExtra(EXTRA_PICKUP_LNG,  0.0)
+        val dropoffLat     = intent.getDoubleExtra(EXTRA_DROPOFF_LAT, 0.0)
+        val dropoffLng     = intent.getDoubleExtra(EXTRA_DROPOFF_LNG, 0.0)
 
-        // Populate text fields immediately — no API round-trip needed
         binding.tvBookingId.text = getString(R.string.label_booking_id, bookingId)
         binding.tvPickup.text    = pickupAddress
         binding.tvDropoff.text   = dropoffAddress
 
-        // Cache LatLng for onMapReady
-        try {
-            if (pickupLat.isNotEmpty() && pickupLng.isNotEmpty()) {
-                pickupLatLng = LatLng(pickupLat.toDouble(), pickupLng.toDouble())
-            }
-            if (dropoffLat.isNotEmpty() && dropoffLng.isNotEmpty()) {
-                dropoffLatLng = LatLng(dropoffLat.toDouble(), dropoffLng.toDouble())
-            }
-        } catch (_: NumberFormatException) { }
+        if (pickupLat != 0.0 && pickupLng != 0.0)
+            pickupLatLng = LatLng(pickupLat, pickupLng)
+        if (dropoffLat != 0.0 && dropoffLng != 0.0)
+            dropoffLatLng = LatLng(dropoffLat, dropoffLng)
     }
 
     override fun onMapReady(map: GoogleMap) {
