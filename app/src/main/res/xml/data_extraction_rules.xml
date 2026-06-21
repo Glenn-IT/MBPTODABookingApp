@@ -5,10 +5,9 @@
 -->
 <data-extraction-rules>
     <cloud-backup>
-        <!-- TODO: Use <include> and <exclude> to control what is backed up.
-        <include .../>
-        <exclude .../>
-        -->
+        <!-- Exclude encrypted prefs — EncryptedSharedPreferences uses hardware-bound keys;
+             restoring to a different device would produce undecryptable data. -->
+        <exclude domain="sharedpref" path="ptoda_prefs.xml" />
     </cloud-backup>
     <!--
     <device-transfer>
