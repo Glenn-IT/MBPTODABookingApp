@@ -28,11 +28,20 @@ abstract class BaseRepository {
     protected fun parseApiError(throwable: Throwable): String {
         return when (throwable) {
             is HttpException -> {
-                try {
-                    val errorBody = throwable.response()?.errorBody()?.string().orEmpty()
-                    JSONObject(errorBody).optString("message", "Server error (${throwable.code()})")
-                } catch (_: Exception) {
-                    "Server error (${throwable.code()})"
+                val bodyMessage = try {
+                    val body = throwable.response()?.errorBody()?.string().orEmpty()
+                    JSONObject(body).optString("message", "").takeIf { it.isNotEmpty() }
+                } catch (_: Exception) { null }
+
+                bodyMessage ?: when (throwable.code()) {
+                    401  -> "Session expired. Please log in again."
+                    403  -> "You don't have permission to do that."
+                    404  -> "The requested resource was not found."
+                    409  -> "This action conflicts with existing data."
+                    422  -> "Please check your input and try again."
+                    429  -> "Too many attempts. Please wait a moment."
+                    500  -> "Something went wrong. Please try again later."
+                    else -> "Server error (${throwable.code()}). Please try again."
                 }
             }
             is IOException -> "No internet connection. Please check your network."
