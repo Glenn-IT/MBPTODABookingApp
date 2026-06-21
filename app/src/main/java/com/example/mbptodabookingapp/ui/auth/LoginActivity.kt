@@ -9,6 +9,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
+import com.example.mbptodabookingapp.R
 import com.example.mbptodabookingapp.data.local.PrefsManager
 import com.example.mbptodabookingapp.databinding.ActivityLoginBinding
 import com.example.mbptodabookingapp.ui.admin.AdminDashboardActivity
@@ -41,6 +42,7 @@ class LoginActivity : AppCompatActivity() {
         binding.tvRegister.setOnClickListener {
             startActivity(Intent(this, RegisterActivity::class.java))
         }
+        binding.tvForgotPassword.setOnClickListener { showForgotPasswordDialog() }
         binding.tvServerConfig.setOnClickListener { showServerConfigDialog() }
 
         observeViewModel()
@@ -50,12 +52,23 @@ class LoginActivity : AppCompatActivity() {
         val email    = binding.etEmail.text.toString().trim()
         val password = binding.etPassword.text.toString()
 
-        if (email.isEmpty())    { binding.tilEmail.error    = "Email is required";    return }
+        if (email.isEmpty()) { binding.tilEmail.error = "Email is required"; return }
+        if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            binding.tilEmail.error = "Invalid email address"; return
+        }
         if (password.isEmpty()) { binding.tilPassword.error = "Password is required"; return }
 
         binding.tilEmail.error    = null
         binding.tilPassword.error = null
         viewModel.login(email, password)
+    }
+
+    private fun showForgotPasswordDialog() {
+        AlertDialog.Builder(this)
+            .setTitle(getString(R.string.forgot_password))
+            .setMessage("Please contact your PTODA admin to reset your password.")
+            .setPositiveButton("OK", null)
+            .show()
     }
 
     private fun observeViewModel() {
