@@ -55,9 +55,12 @@ class RegisterActivity : AppCompatActivity() {
         val isDriver = binding.rbDriver.isChecked
         val role     = if (isDriver) UserRole.DRIVER else UserRole.PASSENGER
 
-        if (name.isEmpty())     { binding.tilName.error     = "Name is required";     return }
-        if (email.isEmpty())    { binding.tilEmail.error    = "Email is required";    return }
-        if (password.length < 6){ binding.tilPassword.error = "Min 6 characters";    return }
+        if (name.isEmpty())  { binding.tilName.error  = "Name is required";  return }
+        if (email.isEmpty()) { binding.tilEmail.error = "Email is required"; return }
+        if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            binding.tilEmail.error = "Invalid email address"; return
+        }
+        if (password.length < 6) { binding.tilPassword.error = "Min 6 characters"; return }
 
         var licenseNo: String? = null
         var vehicleNo: String? = null
