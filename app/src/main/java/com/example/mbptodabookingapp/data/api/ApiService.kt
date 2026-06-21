@@ -9,6 +9,7 @@ import com.example.mbptodabookingapp.data.models.LoginRequest
 import com.example.mbptodabookingapp.data.models.LoginResponse
 import com.example.mbptodabookingapp.data.models.PendingDriver
 import com.example.mbptodabookingapp.data.models.RegisterRequest
+import com.example.mbptodabookingapp.data.models.UpdateDriverStatusRequest
 import com.example.mbptodabookingapp.data.models.UpdateLocationRequest
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -62,6 +63,12 @@ interface ApiService {
     @GET("passenger/history")
     suspend fun getPassengerHistory(): ApiResponse<List<Booking>>
 
+    /** Cancel a ride request (status: requested → cancelled). Role: passenger */
+    @POST("bookings/{id}/cancel")
+    suspend fun cancelBooking(
+        @Path("id") bookingId: Int
+    ): ApiResponse<Unit>
+
     // ── Driver ────────────────────────────────────────────────────────────────
     // See: docs/api/DRIVER.md
 
@@ -81,6 +88,12 @@ interface ApiService {
         @Path("booking_id") bookingId: Int
     ): ApiResponse<Unit>
 
+    /** Start an accepted ride (status: accepted → in_progress). Role: driver */
+    @POST("driver/start/{booking_id}")
+    suspend fun startRide(
+        @Path("booking_id") bookingId: Int
+    ): ApiResponse<Unit>
+
     /** Mark an accepted/in-progress ride as completed. Role: driver */
     @POST("driver/complete/{booking_id}")
     suspend fun completeRide(
@@ -91,6 +104,12 @@ interface ApiService {
     @PUT("driver/location")
     suspend fun updateLocation(
         @Body body: UpdateLocationRequest
+    ): ApiResponse<Unit>
+
+    /** Toggle driver online/offline. Role: driver */
+    @PUT("driver/status")
+    suspend fun updateDriverStatus(
+        @Body body: UpdateDriverStatusRequest
     ): ApiResponse<Unit>
 
     // ── FCM ───────────────────────────────────────────────────────────────────
