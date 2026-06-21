@@ -48,6 +48,18 @@ class PassengerViewModel(application: Application) : AndroidViewModel(applicatio
         }
     }
 
+    // ── Cancel booking ────────────────────────────────────────────────────────
+
+    private val _cancelState = MutableLiveData<Resource<Unit>>()
+    val cancelState: LiveData<Resource<Unit>> = _cancelState
+
+    fun cancelBooking(id: Int) {
+        _cancelState.value = Resource.Loading
+        viewModelScope.launch {
+            _cancelState.value = repo.cancelBooking(id)
+        }
+    }
+
     // ── History ───────────────────────────────────────────────────────────────
 
     private val _history = MutableLiveData<Resource<List<Booking>>>()
