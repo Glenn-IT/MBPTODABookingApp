@@ -11,6 +11,11 @@ data class UpdateLocationRequest(
     val lng: Double
 )
 
+/** Request body for PUT /driver/status */
+data class UpdateDriverStatusRequest(
+    val is_online: Boolean
+)
+
 /**
  * Driver GPS position — used when displaying driver on the map.
  * See: docs/models/DRIVER_INFO.md
