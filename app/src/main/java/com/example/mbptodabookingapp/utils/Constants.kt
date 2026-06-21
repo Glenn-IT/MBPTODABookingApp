@@ -1,19 +1,21 @@
 package com.example.mbptodabookingapp.utils
 
+import com.example.mbptodabookingapp.BuildConfig
+
 /**
  * API base URL constants.
- * Switch BASE_URL to the appropriate value depending on your setup.
- * See: docs/INDEX.md → API Base URL table
+ * BASE_URL is set per build type in app/build.gradle.kts via buildConfigField.
+ * Override at runtime with the ⚙ Server dialog in LoginActivity.
  */
 object Constants {
-    // Physical device → PC on current Wi-Fi (10.240.57.x network)
+    // Reference constants — used in comments and the ⚙ Server dialog hints
     const val BASE_URL_DEVICE   = "http://10.240.57.14/ptoda_booking_api/"
-
-    // Android Emulator → XAMPP Apache (loopback alias for the host PC)
     const val BASE_URL_EMULATOR = "http://10.0.2.2/ptoda_booking_api/"
 
-    // Active base URL — switch between BASE_URL_DEVICE and BASE_URL_EMULATOR
-    const val BASE_URL = BASE_URL_DEVICE
+    // Injected at compile time: debug → device URL, release → production HTTPS URL
+    // (10.4): For release, ensure network_security_config.xml has no cleartext exception
+    //         and APP_ENV=production is set in the PHP .env file.
+    val BASE_URL: String = BuildConfig.BASE_URL
 }
 
 /**
