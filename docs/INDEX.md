@@ -1,144 +1,62 @@
 # PTODA Booking System — Documentation Index
 
-> **Single Source of Truth** for the PHP backend API and the Android (Kotlin) app.
-> Keep this folder synced with every backend change.
+**Last updated:** 2026-06-21
 
 ---
 
-## 📁 Folder Structure
+## Files in This Folder
 
-```
-docs/
-├── INDEX.md                        ← You are here — master navigation
-│
-├── FEASIBILITY_REPORT.md           ← UI migration feasibility analysis (2026-04-12)
-├── UI_MIGRATION_ROADMAP.md         ← Step-by-step UI upgrade plan (Phases 0–10)
-│
-├── api/
-│   ├── AUTH.md                     ← /auth/register, /auth/login
-│   ├── BOOKINGS.md                 ← /bookings (passenger & driver)
-│   ├── DRIVER.md                   ← /driver/* endpoints
-│   ├── ADMIN.md                    ← /admin/* endpoints
-│   └── FCM.md                      ← /user/fcm-token
-│
-├── models/
-│   ├── USER.md                     ← users table + Kotlin data class
-│   ├── BOOKING.md                  ← bookings table + Kotlin data class
-│   ├── DRIVER_INFO.md              ← driver_info table + Kotlin data class
-│   └── FCM_TOKEN.md                ← fcm_tokens table + Kotlin data class
-│
-└── flows/
-    ├── AUTH_FLOW.md                ← Register → Login → Token usage
-    ├── BOOKING_FLOW.md             ← Full ride lifecycle
-    ├── DRIVER_APPROVAL_FLOW.md     ← Driver registration → Admin approval
-    └── ANDROID_SETUP.md            ← Retrofit + FCM + Maps Android bootstrap
-```
+| File | Purpose | When to use |
+|------|---------|-------------|
+| **`DEVELOPMENT_CHECKLIST.md`** | Master phase-by-phase task checklist covering all phases (setup, API, Android, bugs, missing features, security, production) | Track what's done and what's next |
+| **`API_REFERENCE.md`** | All API endpoints — request/response shapes, error codes, Kotlin `ApiService` signatures, Postman quick reference | When adding/changing endpoints or debugging network calls |
+| **`DATA_MODELS.md`** | MySQL table schemas + Kotlin data classes for all tables (users, driver_info, bookings, booking_logs, fcm_tokens) | When changing DB columns or Kotlin models |
+| **`FLOWS.md`** | Step-by-step flows: Auth (register/login), Booking lifecycle, Driver Approval, Android network+FCM+Maps setup | Understanding how screens and API calls connect |
+| **`BUGS_AND_FIXES.md`** | Living log of every bug encountered — root cause + fix applied + prevention tip (BUG-001 through BUG-017) | When a new bug is fixed — add it here |
+| **`UI_MIGRATION_ROADMAP.md`** | UI/UX upgrade plan (Phases 0–10). Phases 0–6 done, Phases 7–10 pending | When working on UI phases 7–10 |
+| **`audit.md`** | Full system audit (security findings, bugs, DB gaps, architecture issues) — updated 2026-06-21 | Reference for current system state |
+| **`audit_lackings.md`** | Backlog of missing features, security gaps, architecture issues with effort/impact — updated 2026-06-21 | Prioritizing what to work on next |
+| **`PROJECT_STRUCTURE.md`** | Actual file tree for both PHP backend and Android app, with known structural gaps noted | Understanding where files are |
+| **`README.md`** | Quick API setup guide, endpoint summary table, test accounts, known issues | New developer onboarding |
 
 ---
 
-## 🔌 API Base URL
+## API Base URLs
 
-| Context                        | URL                                                      |
-| ------------------------------ | -------------------------------------------------------- |
-| Localhost (browser / Postman)  | `http://localhost/ptoda_booking_api/`                    |
-| PHP dev server (alternative)   | `http://localhost:8001/`                                 |
-| Android Emulator → host PC     | `http://10.0.2.2/ptoda_booking_api/`                     |
-| Android Emulator → PHP dev srv | `http://10.0.2.2:8001/`                                  |
-| Physical device (same Wi-Fi)   | `http://192.168.0.101/ptoda_booking_api/` ✅ Confirmed   |
-
-> **Active `BASE_URL` in `Constants.kt`:** `BASE_URL_DEVICE` = `http://192.168.0.101/ptoda_booking_api/`
-> **Network:** PC `192.168.0.101` · Phone `192.168.0.100` · Same Wi-Fi
-> **Apache mod_rewrite:** ✅ Working — `RewriteBase /ptoda_booking_api/` set in `.htaccess`
+| Context | URL |
+|---------|-----|
+| PC browser / Postman | `http://localhost/ptoda_booking_api/` |
+| Android Emulator | `http://10.0.2.2/ptoda_booking_api/` |
+| Physical device (same Wi-Fi) | `http://192.168.0.101/ptoda_booking_api/` ✅ active |
 
 ---
 
-## 🔐 Authentication
+## Current Priority (2026-06-21)
 
-All protected endpoints require a **JWT Bearer token** in the request header:
+**Do these first (Phase 7 — Critical Fixes):**
 
-```
-Authorization: Bearer <jwt_token>
-```
+| # | Action | Why |
+|---|--------|-----|
+| 1 | Delete `check_admin.php` + `fix_admin.php` from web root | Anyone on LAN can reset admin password right now |
+| 2 | Set real `JWT_SECRET` in `config/config.php` | All JWTs are currently forgeable |
+| 3 | Set real `FCM_SERVER_KEY` + migrate FCM to HTTP v1 | Push notifications have never worked; Legacy API is shut down |
+| 4 | Fix `Booking.kt` coordinates `String → Double` | App will crash on map screens with real booking data |
 
-Tokens are obtained from `POST /auth/login`. Roles encoded in the JWT payload:
-`passenger` | `driver` | `admin`
-
----
-
-## 📋 All Endpoints at a Glance
-
-| Method   | Endpoint                        | Auth | Role      | Doc File          |
-| -------- | ------------------------------- | ---- | --------- | ----------------- |
-| `POST`   | `/auth/register`                | ❌   | —         | `api/AUTH.md`     |
-| `POST`   | `/auth/login`                   | ❌   | —         | `api/AUTH.md`     |
-| `POST`   | `/bookings`                     | ✅   | Passenger | `api/BOOKINGS.md` |
-| `GET`    | `/bookings`                     | ✅   | Any       | `api/BOOKINGS.md` |
-| `GET`    | `/bookings/{id}`                | ✅   | Any       | `api/BOOKINGS.md` |
-| `GET`    | `/passenger/history`            | ✅   | Passenger | `api/BOOKINGS.md` |
-| `GET`    | `/driver/requests`              | ✅   | Driver    | `api/DRIVER.md`   |
-| `POST`   | `/driver/accept/{booking_id}`   | ✅   | Driver    | `api/DRIVER.md`   |
-| `POST`   | `/driver/reject/{booking_id}`   | ✅   | Driver    | `api/DRIVER.md`   |
-| `POST`   | `/driver/complete/{booking_id}` | ✅   | Driver    | `api/DRIVER.md`   |
-| `PUT`    | `/driver/location`              | ✅   | Driver    | `api/DRIVER.md`   |
-| `PUT`    | `/user/fcm-token`               | ✅   | Any       | `api/FCM.md`      |
-| `GET`    | `/admin/users`                  | ✅   | Admin     | `api/ADMIN.md`    |
-| `GET`    | `/admin/drivers/pending`        | ✅   | Admin     | `api/ADMIN.md`    |
-| `GET`    | `/admin/bookings`               | ✅   | Admin     | `api/ADMIN.md`    |
-| `PUT`    | `/admin/driver/approve/{id}`    | ✅   | Admin     | `api/ADMIN.md`    |
-| `PUT`    | `/admin/driver/reject/{id}`     | ✅   | Admin     | `api/ADMIN.md`    |
-| `PUT`    | `/admin/user/activate/{id}`     | ✅   | Admin     | `api/ADMIN.md`    |
-| `PUT`    | `/admin/user/deactivate/{id}`   | ✅   | Admin     | `api/ADMIN.md`    |
-| `DELETE` | `/admin/user/{id}`              | ✅   | Admin     | `api/ADMIN.md`    |
+See `DEVELOPMENT_CHECKLIST.md` Phase 7 for the full list.
 
 ---
 
-## 🗄️ Database Tables
+## What Was Removed / Compiled
 
-| Table          | Purpose                                     | Model Doc               |
-| -------------- | ------------------------------------------- | ----------------------- |
-| `users`        | All users — passengers, drivers, admins     | `models/USER.md`        |
-| `driver_info`  | Extended driver profile + approval status   | `models/DRIVER_INFO.md` |
-| `bookings`     | All ride booking records                    | `models/BOOKING.md`     |
-| `booking_logs` | Audit trail of every booking status change  | `models/BOOKING.md`     |
-| `fcm_tokens`   | FCM push token per user (upserted on login) | `models/FCM_TOKEN.md`   |
+Previously the docs had 23 files including `api/`, `models/`, and `flows/` subfolders. These were compiled into 3 files and the subfolders were deleted:
 
----
+| Old (13 files) | Compiled into |
+|----------------|---------------|
+| `api/AUTH.md`, `api/BOOKINGS.md`, `api/DRIVER.md`, `api/ADMIN.md`, `api/FCM.md` | `API_REFERENCE.md` |
+| `models/USER.md`, `models/BOOKING.md`, `models/DRIVER_INFO.md`, `models/FCM_TOKEN.md` | `DATA_MODELS.md` |
+| `flows/AUTH_FLOW.md`, `flows/BOOKING_FLOW.md`, `flows/DRIVER_APPROVAL_FLOW.md`, `flows/ANDROID_SETUP.md` | `FLOWS.md` |
 
-## 🔄 Sync Rules — When to Update Docs
-
-> **Rule:** Every backend change that affects an API contract MUST update the matching doc file before the PR is merged.
-
-| Backend Change                           | Update These Files                            |
-| ---------------------------------------- | --------------------------------------------- |
-| New endpoint added                       | `INDEX.md` table + matching `api/*.md` file   |
-| Endpoint request/response shape changed  | Matching `api/*.md` + `models/*.md` if needed |
-| New DB column added                      | Matching `models/*.md` + Kotlin data class    |
-| New DB table added                       | New `models/*.md` + `INDEX.md` table          |
-| Auth rules changed (role, status checks) | `api/AUTH.md` + matching `flows/*.md`         |
-| New business flow                        | New or updated `flows/*.md`                   |
-| Bug found & fixed                        | `BUGS_AND_FIXES.md`                           |
-
----
-
-## 🖌️ UI/UX Migration (Active — April 2026)
-
-| File | Purpose |
-| ---------------------------- | ----------------------------------------------------------------- |
-| `FEASIBILITY_REPORT.md` | Full analysis of `PTODA_Prototype` vs `MBPTODABookingApp` — risks, screen mapping, critical IDs |
-| `UI_MIGRATION_ROADMAP.md` | Step-by-step execution plan (Phases 0–10) with checklists and test matrices |
-
----
-
-## 📚 Legacy Guide Files (kept for reference)
-
-| File                         | Purpose                                     |
-| ---------------------------- | ------------------------------------------- |
-| `README.md`                  | Setup instructions, quick endpoint overview |
-| `PROJECT_STRUCTURE.md`       | Backend + Android folder structure          |
-| `DEVELOPMENT_CHECKLIST.md`   | Phase-by-phase task checklist               |
-| `BUGS_AND_FIXES.md`          | Issue log with root causes and fixes        |
-| `Mobile-Based Tricycle...md` | Original MVP roadmap document               |
-
----
-
-_Last updated: 2026-04-12_
+Deleted (not useful as project docs):
+- `PROMPT_TEMPLATES.md` — AI prompting templates for Copilot
+- `FEASIBILITY_REPORT.md` — UI migration analysis (Phases 0–6 are done; analysis is now historical)
+- `Mobile-Based Tricycle Booking System (PTODA) – MVP Development Roadmap.md` — original draft roadmap, fully superseded by the checklist
