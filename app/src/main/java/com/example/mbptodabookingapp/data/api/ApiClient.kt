@@ -1,6 +1,7 @@
 package com.example.mbptodabookingapp.data.api
 
 import android.content.Context
+import com.example.mbptodabookingapp.BuildConfig
 import com.example.mbptodabookingapp.data.local.PrefsManager
 import com.example.mbptodabookingapp.utils.Constants
 import okhttp3.Interceptor
@@ -61,9 +62,11 @@ object ApiClient {
         response
     }
 
-    /** Logs full request + response bodies. Set to NONE before releasing to production. */
     private val loggingInterceptor = HttpLoggingInterceptor().apply {
-        level = HttpLoggingInterceptor.Level.BODY
+        level = if (BuildConfig.DEBUG)
+            HttpLoggingInterceptor.Level.BODY
+        else
+            HttpLoggingInterceptor.Level.NONE
     }
 
     // ── OkHttp + Retrofit ─────────────────────────────────────────────────────
