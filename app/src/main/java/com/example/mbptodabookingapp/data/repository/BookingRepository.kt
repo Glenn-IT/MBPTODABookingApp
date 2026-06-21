@@ -3,6 +3,7 @@ package com.example.mbptodabookingapp.data.repository
 import com.example.mbptodabookingapp.data.api.ApiService
 import com.example.mbptodabookingapp.data.models.Booking
 import com.example.mbptodabookingapp.data.models.BookingRequest
+import com.example.mbptodabookingapp.data.models.UpdateDriverStatusRequest
 import com.example.mbptodabookingapp.utils.Resource
 
 /**
@@ -101,6 +102,20 @@ class BookingRepository(
         }
     }
 
+    /**
+     * Cancel a ride request. Only valid when status = 'requested'.
+     *
+     * See: docs/api/BOOKINGS.md → POST /bookings/{id}/cancel
+     */
+    suspend fun cancelBooking(bookingId: Int): Resource<Unit> {
+        return try {
+            val response = api.cancelBooking(bookingId)
+            if (response.success) Resource.Success(Unit) else Resource.Error(response.message)
+        } catch (e: Exception) {
+            Resource.Error(parseApiError(e))
+        }
+    }
+
     // ── Driver ────────────────────────────────────────────────────────────────
 
     /**
@@ -154,6 +169,20 @@ class BookingRepository(
     }
 
     /**
+     * Start an accepted ride: accepted → in_progress.
+     *
+     * See: docs/api/DRIVER.md → POST /driver/start/{booking_id}
+     */
+    suspend fun startRide(bookingId: Int): Resource<Unit> {
+        return try {
+            val response = api.startRide(bookingId)
+            if (response.success) Resource.Success(Unit) else Resource.Error(response.message)
+        } catch (e: Exception) {
+            Resource.Error(parseApiError(e))
+        }
+    }
+
+    /**
      * Mark an active ride as completed. Sets status → 'completed'.
      * The API also sends an FCM push notification to the passenger.
      *
@@ -163,6 +192,20 @@ class BookingRepository(
     suspend fun completeRide(bookingId: Int): Resource<Unit> {
         return try {
             val response = api.completeRide(bookingId)
+            if (response.success) Resource.Success(Unit) else Resource.Error(response.message)
+        } catch (e: Exception) {
+            Resource.Error(parseApiError(e))
+        }
+    }
+
+    /**
+     * Toggle driver online/offline status.
+     *
+     * See: docs/api/DRIVER.md → PUT /driver/status
+     */
+    suspend fun updateDriverStatus(isOnline: Boolean): Resource<Unit> {
+        return try {
+            val response = api.updateDriverStatus(UpdateDriverStatusRequest(isOnline))
             if (response.success) Resource.Success(Unit) else Resource.Error(response.message)
         } catch (e: Exception) {
             Resource.Error(parseApiError(e))
