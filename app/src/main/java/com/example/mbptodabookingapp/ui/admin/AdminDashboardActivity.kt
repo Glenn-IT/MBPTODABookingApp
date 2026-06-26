@@ -4,20 +4,17 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.example.mbptodabookingapp.R
 import com.example.mbptodabookingapp.databinding.ActivityAdminDashboardBinding
 import com.example.mbptodabookingapp.ui.auth.AuthViewModel
 import com.example.mbptodabookingapp.ui.auth.LoginActivity
-import com.example.mbptodabookingapp.utils.Resource
+import com.google.android.material.tabs.TabLayoutMediator
 
-/** Admin dashboard — shows counts for users, pending drivers, and bookings. */
 class AdminDashboardActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityAdminDashboardBinding
-    private lateinit var viewModel: AdminViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,49 +23,14 @@ class AdminDashboardActivity : AppCompatActivity() {
 
         setSupportActionBar(binding.toolbar)
 
-        viewModel = ViewModelProvider(this)[AdminViewModel::class.java]
+        binding.viewPager.adapter = AdminPagerAdapter(this)
 
-        observeViewModel()
-        loadStats()
-
-        binding.btnManageUsers.setOnClickListener {
-            startActivity(Intent(this, ManageUsersActivity::class.java))
-        }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        loadStats()
-    }
-
-    private fun loadStats() {
-        viewModel.fetchUsers()
-        viewModel.fetchPendingDrivers()
-        viewModel.fetchBookings()
-    }
-
-    private fun observeViewModel() {
-        viewModel.users.observe(this) { state ->
-            when (state) {
-                is Resource.Loading -> binding.progressBar.visibility = View.VISIBLE
-                is Resource.Success -> {
-                    binding.progressBar.visibility = View.GONE
-                    binding.tvUserCount.text = state.data?.size.toString()
-                }
-                is Resource.Error -> {
-                    binding.progressBar.visibility = View.GONE
-                    binding.tvUserCount.text = "!"
-                }
+        TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
+            tab.text = when (position) {
+                0    -> getString(R.string.tab_overview)
+                else -> getString(R.string.tab_bookings)
             }
-        }
-        viewModel.pendingDrivers.observe(this) { state ->
-            if (state is Resource.Success)
-                binding.tvPendingCount.text = state.data?.size.toString()
-        }
-        viewModel.bookings.observe(this) { state ->
-            if (state is Resource.Success)
-                binding.tvBookingCount.text = state.data?.size.toString()
-        }
+        }.attach()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -87,4 +49,3 @@ class AdminDashboardActivity : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 }
-

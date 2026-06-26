@@ -217,28 +217,30 @@
 | Phase 9 | Global Theme Consistency | ⬜ Pending |
 | Phase 10 | End-to-End Manual Test Matrix | ⬜ Pending |
 
-### Phase 6 → Phase 7: Admin Tabs + ViewPager2
+### Phase 6 → Phase 7: Admin Tabs + ViewPager2 ✅ 2026-06-21
 
-- [ ] **6.7.1** Create `AdminPagerAdapter.kt`
-- [ ] **6.7.2** Create `AdminStatsFragment.kt` (moves stats cards)
-- [ ] **6.7.3** Create `AdminBookingsFragment.kt` (bookings list)
-- [ ] **6.7.4** Update `activity_admin_dashboard.xml` → `TabLayout + ViewPager2`
-- [ ] **6.7.5** Update `AdminDashboardActivity.kt` — wire pager + verify observers
-- [ ] **6.7.6** Test: Stats load on Overview tab, Manage Users still accessible
+- [x] **6.7.1** Create `AdminPagerAdapter.kt`
+- [x] **6.7.2** Create `AdminStatsFragment.kt` (moves stats cards)
+- [x] **6.7.3** Create `AdminBookingsFragment.kt` (bookings list) + `AdminBookingsAdapter.kt` + `item_admin_booking.xml`
+- [x] **6.7.4** Update `activity_admin_dashboard.xml` → `TabLayout + ViewPager2`
+- [x] **6.7.5** Update `AdminDashboardActivity.kt` — wire pager via `TabLayoutMediator`; observers moved to fragments
+- [x] **6.7.6** Added `androidx.viewpager2:viewpager2:1.1.0` to `build.gradle.kts`
+- [ ] **6.7.7** Test: Overview tab loads stats; Bookings tab shows list; Manage Users navigates correctly
 
-### Phase 6 → Phase 8: RecyclerView Card Redesign
+### Phase 6 → Phase 8: RecyclerView Card Redesign ✅ 2026-06-21
 
-- [ ] **6.8.1** Wrap `item_ride_request.xml` in `MaterialCardView` (8dp radius, 4dp elevation)
-- [ ] **6.8.2** Wrap `item_user.xml` in `MaterialCardView`
-- [ ] **6.8.3** Wrap `item_pending_driver.xml` in `MaterialCardView`
-- [ ] **6.8.4** Build passes + visual check ✅
+- [x] **6.8.1** `item_ride_request.xml` — already MaterialCardView; standardized to 12dp/4dp
+- [x] **6.8.2** `item_user.xml` — already MaterialCardView; standardized to 12dp/4dp
+- [x] **6.8.3** `item_pending_driver.xml` — already MaterialCardView; standardized to 12dp/4dp
+- [x] **6.8.4** `item_booking_history.xml` — also standardized to 12dp/4dp for consistency
+- [ ] **6.8.5** Build passes + visual check
 
-### Phase 6 → Phase 9: Global Theme Consistency
+### Phase 6 → Phase 9: Global Theme Consistency ✅ 2026-06-21
 
-- [ ] **6.9.1** Add global `ShapeAppearance` for buttons (8dp corners) to `themes.xml`
-- [ ] **6.9.2** Apply `TextAppearance.MaterialComponents` headline hierarchy
-- [ ] **6.9.3** Ensure all Toolbars use `@color/colorPrimary` consistently
-- [ ] **6.9.4** Final color audit across all 11 screens
+- [x] **6.9.1** Global button shape already set via `materialButtonStyle` → `Widget.App.Button` (24dp pill) in `themes.xml`
+- [x] **6.9.2** Added `TextAppearance.App.ScreenTitle`, `TextAppearance.App.StatNumber`, `TextAppearance.App.Body` to `themes.xml`
+- [x] **6.9.3** All Toolbars confirmed using `android:background="@color/colorPrimary"` consistently
+- [ ] **6.9.4** Final color audit across all 11 screens (manual check)
 
 ### Phase 6 → Phase 10: End-to-End Test Matrix
 
@@ -299,9 +301,7 @@ These are security threats or runtime crashes. Fix before any feature work.
 
 - [x] **7.3.1** **Fix `ManageUsersActivity` success feedback** — ✅ Added success Toast + auto-refresh of the active tab. 2026-06-21
 
-- [ ] **7.3.2** **Fix `rejectRide()` ownership check** — any authenticated driver can reject any `requested` booking. No check verifies the rejecting driver was associated with the request.
-  - File: `DriverController.php:67-81`
-  - Fix: Decide and document whether rejection is open to any driver (broadcast model) or restricted. If restricted, add a check.
+- [x] **7.3.2** **Fix `rejectRide()` ownership check** — ✅ Broadcast model adopted: `rejectRide()` no longer changes booking status. Driver "skips" the request; booking stays `requested` so other drivers can still accept. `STATUS_REJECTED` reserved for admin/system use. 2026-06-21
 
 - [x] **7.3.3** **Fix polling reads stale state** in `RideStatusActivity` — ✅ pollRunnable now always reschedules; observer cancels via removeCallbacks when terminal. 2026-06-21
 
@@ -311,17 +311,10 @@ These are security threats or runtime crashes. Fix before any feature work.
 
 - [x] **7.4.1** **Set `HttpLoggingInterceptor` to `NONE` for release builds** — ✅ Gated on BuildConfig.DEBUG; also enabled buildConfig in build.gradle.kts. 2026-06-21
 
-- [ ] **7.4.2** **Move Maps API key to `local.properties` + `BuildConfig`**
-  - File: `AndroidManifest.xml:28` (key `AIzaSyD4we-...` is hardcoded)
-  - Fix:
-    1. Add key to `local.properties`: `MAPS_API_KEY=AIzaSyD4we-...`
-    2. In `app/build.gradle.kts`: `manifestPlaceholders["MAPS_API_KEY"] = localProperties["MAPS_API_KEY"]`
-    3. In `AndroidManifest.xml`: `android:value="${MAPS_API_KEY}"`
-    4. Restrict key in Google Cloud Console to this app's SHA-1 + package name
+- [x] **7.4.2** **Move Maps API key to `local.properties` + `BuildConfig`** — ✅ Key moved to `local.properties` (gitignored); `build.gradle.kts` reads it via `Properties` and sets `manifestPlaceholders["MAPS_API_KEY"]`; `AndroidManifest.xml` uses `${MAPS_API_KEY}`. 2026-06-21
+  - Still recommended: restrict key in Google Cloud Console to this app's SHA-1 + package name
 
-- [ ] **7.4.3** **Gate error detail output on `APP_ENV`**
-  - Files: `index.php:22`, `config/database.php:27`
-  - Fix: Replace `$e->getMessage()` with a conditional — return full message only when `APP_ENV === 'development'`, generic `"Server error."` otherwise.
+- [x] **7.4.3** **Gate error detail output on `APP_ENV`** — ✅ `config/database.php` PDO catch now checks `APP_ENV !== 'production'` before including `error` field (with `defined()` guard for standalone loads). `index.php` exception/error handlers were already gated. 2026-06-21
 
 ---
 
@@ -546,7 +539,7 @@ Setup: `cd C:\xampp\htdocs\ptoda_booking_api && composer install && vendor/bin/p
 | BUG-017 | ✅ Fixed | `Booking.kt` | Coordinates changed String→Double; .toDouble() calls removed | 7.2.1 |
 | BUG-018 | ✅ Fixed | `Booking.kt` | `passenger_name` field added | 7.2.2 |
 | BUG-019 | ✅ Fixed | `Booking.kt` | `driver_name`/`driver_email` added; driver card shown in RideStatusActivity | 7.2.3 |
-| BUG-020 | 🟠 High | `DriverController.php:79` | `rejectRide()` has no ownership check (broadcast model — any driver can reject) | 7.3.2 |
+| BUG-020 | ✅ Fixed | `DriverController.php` | `rejectRide()` no longer changes booking status; broadcast skip model adopted | 7.3.2 |
 | BUG-021 | ✅ Fixed | `AuthController.php` | Driver registration now requires license_no + vehicle_no | 7.3.4 |
 | BUG-022 | ✅ Fixed | `RideStatusActivity.kt` | pollRunnable always reschedules; observer cancels on terminal status | 7.3.3 |
 | BUG-023 | ✅ Fixed | `ManageUsersActivity.kt` | Success toast + list auto-refresh added | 7.3.1 |

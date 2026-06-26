@@ -1,7 +1,14 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.google.services)
+}
+
+val localProperties = Properties().apply {
+    val f = rootProject.file("local.properties")
+    if (f.exists()) load(f.inputStream())
 }
 
 android {
@@ -20,6 +27,7 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        manifestPlaceholders["MAPS_API_KEY"] = localProperties.getProperty("MAPS_API_KEY", "")
     }
 
     buildTypes {
@@ -86,6 +94,9 @@ dependencies {
 
     // RecyclerView
     implementation(libs.recyclerview)
+
+    // ViewPager2 — admin tab navigation
+    implementation("androidx.viewpager2:viewpager2:1.1.0")
 
     // Encrypted SharedPreferences — secure JWT/token storage
     implementation("androidx.security:security-crypto:1.1.0-alpha06")

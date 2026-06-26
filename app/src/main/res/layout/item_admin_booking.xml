@@ -14,13 +14,13 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <!-- Booking ID row + "PENDING" chip -->
+        <!-- Booking ID + status badge -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
             android:orientation="horizontal"
-            android:layout_marginBottom="12dp">
+            android:layout_marginBottom="4dp">
 
             <TextView
                 android:id="@+id/tvBookingId"
@@ -29,10 +29,11 @@
                 android:layout_weight="1"
                 android:text="Booking #—"
                 android:textColor="@color/colorPrimary"
-                android:textSize="15sp"
+                android:textSize="14sp"
                 android:textStyle="bold" />
 
             <TextView
+                android:id="@+id/tvStatus"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/shape_status_badge"
@@ -40,18 +41,27 @@
                 android:paddingTop="4dp"
                 android:paddingEnd="10dp"
                 android:paddingBottom="4dp"
-                android:text="PENDING"
-                android:textColor="@color/statusRequested"
                 android:textSize="10sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:textAllCaps="true" />
 
         </LinearLayout>
+
+        <!-- Passenger name -->
+        <TextView
+            android:id="@+id/tvPassengerName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:text="Passenger: —"
+            android:textColor="@color/grey_text"
+            android:textSize="12sp" />
 
         <!-- Divider -->
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:layout_marginBottom="12dp"
+            android:layout_marginBottom="10dp"
             android:background="@color/colorDivider" />
 
         <!-- Pickup -->
@@ -60,13 +70,13 @@
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
             android:orientation="horizontal"
-            android:layout_marginBottom="6dp">
+            android:layout_marginBottom="4dp">
 
             <TextView
-                android:layout_width="20dp"
+                android:layout_width="18dp"
                 android:layout_height="wrap_content"
                 android:text="📍"
-                android:textSize="14sp" />
+                android:textSize="13sp" />
 
             <TextView
                 android:id="@+id/tvPickup"
@@ -74,11 +84,10 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:layout_marginStart="6dp"
-                android:text="—"
-                android:textColor="@color/black"
-                android:textSize="13sp"
+                android:ellipsize="end"
                 android:maxLines="1"
-                android:ellipsize="end" />
+                android:textColor="@color/black"
+                android:textSize="13sp" />
 
         </LinearLayout>
 
@@ -88,13 +97,13 @@
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
             android:orientation="horizontal"
-            android:layout_marginBottom="14dp">
+            android:layout_marginBottom="8dp">
 
             <TextView
-                android:layout_width="20dp"
+                android:layout_width="18dp"
                 android:layout_height="wrap_content"
                 android:text="🏁"
-                android:textSize="14sp" />
+                android:textSize="13sp" />
 
             <TextView
                 android:id="@+id/tvDropoff"
@@ -102,20 +111,20 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:layout_marginStart="6dp"
-                android:text="—"
-                android:textColor="@color/black"
-                android:textSize="13sp"
+                android:ellipsize="end"
                 android:maxLines="1"
-                android:ellipsize="end" />
+                android:textColor="@color/black"
+                android:textSize="13sp" />
 
         </LinearLayout>
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnViewRequest"
-            android:layout_width="match_parent"
+        <!-- Date -->
+        <TextView
+            android:id="@+id/tvDate"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/btn_view_request"
-            android:textStyle="bold" />
+            android:textColor="@color/grey_text"
+            android:textSize="11sp" />
 
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>
